@@ -41,29 +41,32 @@ body{
   box-shadow:0 0 13px rgba(0,0,0,.12);pointer-events:none
 }
 
-/* Lightweight single-sheet flip. The underlying pages remain intact. */
+/* FINAL — realistic single-sheet paper turn, no segmented slices */
 .sheet{
   position:absolute;top:0;width:50%;height:100%;z-index:50;
-  transform-style:preserve-3d;pointer-events:none;overflow:visible
+  transform-style:preserve-3d;pointer-events:none;overflow:visible;
+  transform-origin:left center;will-change:transform
 }
-.sheet.forward{left:50%}.sheet.backward{left:0}
-.fold{
-  position:absolute;top:0;height:100%;transform-style:preserve-3d;
-  backface-visibility:visible;will-change:transform
-}
-.fold-face{
+.sheet.forward{left:50%}
+.sheet.backward{left:0;transform-origin:right center}
+.sheet-face{
   position:absolute;inset:0;background:#f7f5ef;overflow:hidden;
   backface-visibility:hidden;box-shadow:inset 0 0 0 1px rgba(0,0,0,.035)
 }
-.fold-face.back{transform:rotateY(180deg)}
-.fold-face img{position:absolute;top:0;width:800%;height:100%;max-width:none;object-fit:contain}
-.fold-gloss{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(255,255,255,.14),transparent 45%,rgba(0,0,0,.12));opacity:.0}
+.sheet-face.back{transform:rotateY(180deg)}
+.sheet-face img{display:block;width:100%;height:100%;object-fit:contain;background:#f7f5ef;pointer-events:none}
+.sheet::before{
+  content:"";position:absolute;inset:0;z-index:5;pointer-events:none;
+  background:linear-gradient(90deg,rgba(255,255,255,.18),transparent 18%,transparent 76%,rgba(0,0,0,.12));
+  opacity:.72;backface-visibility:hidden
+}
+.sheet.backward::before{background:linear-gradient(270deg,rgba(255,255,255,.18),transparent 18%,transparent 76%,rgba(0,0,0,.12))}
 .sheet-shadow{
   position:absolute;top:0;width:50%;height:100%;z-index:45;
-  pointer-events:none;opacity:0;filter:blur(7px)
+  pointer-events:none;opacity:0;filter:blur(8px)
 }
-.sheet-shadow.forward{left:50%;background:linear-gradient(90deg,rgba(0,0,0,.34),transparent 64%)}
-.sheet-shadow.backward{left:0;background:linear-gradient(270deg,rgba(0,0,0,.34),transparent 64%)}
+.sheet-shadow.forward{left:50%;background:linear-gradient(90deg,rgba(0,0,0,.30),transparent 68%)}
+.sheet-shadow.backward{left:0;background:linear-gradient(270deg,rgba(0,0,0,.30),transparent 68%)}
 
 .cover{
   position:absolute;inset:0;background:#f2eee5;color:#171614;
@@ -108,6 +111,7 @@ body{
  .page.mobile-current{display:block}
  .spine{display:none}
  .sheet,.sheet.forward,.sheet.backward{left:0;width:100%;transform-origin:left center}
+ .sheet.backward{transform-origin:right center}
  .sheet-shadow,.sheet-shadow.forward,.sheet-shadow.backward{left:0;width:100%}
  .hint{top:11px;font-size:9px}.counter{bottom:11px}
 }
@@ -201,64 +205,31 @@ function makeSheet(direction,frontSrc,backSrc){
  sheet.className='sheet '+direction;
  const sh=document.createElement('div');
  sh.className='sheet-shadow '+direction;
+ const front=document.createElement('div');
+ front.className='sheet-face front';
+ front.innerHTML=img(frontSrc);
+ const back=document.createElement('div');
+ back.className='sheet-face back';
+ back.innerHTML=img(backSrc||frontSrc);
+ sheet.append(front,back);
  s.append(sh,sheet);
-
- const N=8;
- for(let i=0;i<N;i++){
-   const fold=document.createElement('div');
-   fold.className='fold';
-   fold.style.left=(i*100/N)+'%';
-   fold.style.width=(100/N)+'%';
-
-   const f=document.createElement('div');
-   f.className='fold-face front';
-   const b=document.createElement('div');
-   b.className='fold-face back';
-
-   if(frontSrc){
-     const a=document.createElement('img');
-     a.src=frontSrc; a.draggable=false;
-     a.style.left=(-i*100)+'%';
-     const z=document.createElement('img');
-     z.src=backSrc||frontSrc; z.draggable=false;
-     z.style.left=(-i*100)+'%';
-     f.append(a); b.append(z);
-   }
-   fold.append(f,b);
-   sheet.append(fold);
- }
  return {sheet,sh};
 }
 
-function setSheetProgress(sheet,sh,direction,p,animate){
- if(!sheet)return;
- const folds=[...sheet.children];
- const N=folds.length;
- const sign=direction==='forward'?1:-1;
- const baseAngle=(direction==='forward'?-180:180)*p;
-
- folds.forEach((fold,i)=>{
-   const t=i/(N-1);
-   const curve=Math.sin(t*Math.PI);
-   const angle=baseAngle + sign*(i-(N-1)/2)*7.5*p;
-   const bend=curve*24*p;
-   const lift=curve*16*p;
-   fold.style.transition=animate?`transform ${DURATION}ms ${EASE}`:'none';
-   fold.style.transform=`translate3d(${sign*bend}px,0,${lift}px) rotateY(${angle}deg)`;
-
-   const gloss=fold.querySelector('.fold-gloss');
-   if(gloss) gloss.style.opacity=(.10+.16*curve*p).toFixed(3);
- });
+function setSheet(sheet,sh,direction,progress,animate=true){
+ const p=Math.max(0,Math.min(1,progress));
+ const angle=(direction==='forward'?-180:180)*p;
+ sheet.style.transition=animate?`transform ${DURATION}ms ${EASE}`:'none';
+ sheet.style.transform=`rotateY(${angle}deg)`;
  if(sh){
    sh.style.transition=animate?`opacity ${DURATION}ms ease`:'none';
-   sh.style.opacity=String(.05+.34*Math.sin(p*Math.PI));
+   sh.style.opacity=String(.10+.24*Math.sin(p*Math.PI));
  }
 }
 
 function animateSheet(sheet,sh,direction){
- requestAnimationFrame(()=>requestAnimationFrame(()=>{
-   setSheetProgress(sheet,sh,direction,1,true);
- }));
+ setSheet(sheet,sh,direction,0,false);
+ requestAnimationFrame(()=>requestAnimationFrame(()=>setSheet(sheet,sh,direction,1,true)));
 }
 
 function openBook(){
@@ -272,34 +243,19 @@ function openBook(){
  sheet.className='sheet forward';
  const sh=document.createElement('div');
  sh.className='sheet-shadow forward';
+ const front=document.createElement('div');
+ front.className='sheet-face front';
+ front.innerHTML=cover();
+ const back=document.createElement('div');
+ back.className='sheet-face back';
+ back.innerHTML=img(pages[1]);
+ sheet.append(front,back);
  s.append(sh,sheet); book.append(s);
-
- const N=8;
- for(let i=0;i<N;i++){
-   const fold=document.createElement('div');
-   fold.className='fold';
-   fold.style.left=(i*100/N)+'%';
-   fold.style.width=(100/N)+'%';
-
-   const f=document.createElement('div');
-   f.className='fold-face front';
-   f.innerHTML=cover();
-   const b=document.createElement('div');
-   b.className='fold-face back';
-   b.innerHTML=img(pages[1]);
-
-   const cv=f.querySelector('.cover');
-   cv.style.width=N*100+'%';
-   cv.style.left=(-i*100)+'%';
-
-   fold.append(f,b);
-   sheet.append(fold);
- }
- animateSheet(sheet,sh,'forward');
-
+ setSheet(sheet,sh,'forward',0,false);
+ requestAnimationFrame(()=>requestAnimationFrame(()=>setSheet(sheet,sh,'forward',1,true)));
  setTimeout(()=>{
    open=true; spread=0; renderSpread(); busy=false;
- },DURATION+40);
+ },DURATION+50);
 }
 
 function forward(){
@@ -311,38 +267,24 @@ function forward(){
  const currentRight=2+spread*2;
  const {sheet,sh}=makeSheet('forward',pages[currentRight],pages[nextLeft]);
  animateSheet(sheet,sh,'forward');
- setTimeout(()=>{
-   spread=next; renderSpread(); busy=false;
- },DURATION+40);
+ setTimeout(()=>{spread=next;renderSpread();busy=false},DURATION+50);
 }
 
 function back(){
  if(busy||!open)return;
  busy=true;
-
  if(spread===0){
    const {sheet,sh}=makeSheet('backward',pages[1],null);
-   const folds=[...sheet.children];
-   folds.forEach((fold,i)=>{
-     fold.querySelector('.back').innerHTML=cover();
-     const cv=fold.querySelector('.back .cover');
-     cv.style.width=folds.length*100+'%';
-     cv.style.left=(-i*100)+'%';
-   });
+   sheet.querySelector('.back').innerHTML=cover();
    animateSheet(sheet,sh,'backward');
-   setTimeout(()=>{
-     open=false; renderClosed(); busy=false;
-   },DURATION+40);
+   setTimeout(()=>{open=false;renderClosed();busy=false},DURATION+50);
    return;
  }
-
  const currentLeft=1+spread*2;
  const previousRight=1+(spread-1)*2+1;
  const {sheet,sh}=makeSheet('backward',pages[currentLeft],pages[previousRight]);
  animateSheet(sheet,sh,'backward');
- setTimeout(()=>{
-   spread--; renderSpread(); busy=false;
- },DURATION+40);
+ setTimeout(()=>{spread--;renderSpread();busy=false},DURATION+50);
 }
 
 /* Touch/mouse drag: intentionally restrained to keep the stable layout intact. */
