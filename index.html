@@ -44,23 +44,26 @@ body{
 /* Lightweight single-sheet flip. The underlying pages remain intact. */
 .sheet{
   position:absolute;top:0;width:50%;height:100%;z-index:50;
-  transform-style:preserve-3d;backface-visibility:visible;
-  will-change:transform;pointer-events:none
+  transform-style:preserve-3d;pointer-events:none;overflow:visible
 }
-.sheet.forward{left:50%;transform-origin:left center}
-.sheet.backward{left:0;transform-origin:right center}
-.sheet-face{
+.sheet.forward{left:50%}.sheet.backward{left:0}
+.fold{
+  position:absolute;top:0;height:100%;transform-style:preserve-3d;
+  backface-visibility:visible;will-change:transform
+}
+.fold-face{
   position:absolute;inset:0;background:#f7f5ef;overflow:hidden;
   backface-visibility:hidden;box-shadow:inset 0 0 0 1px rgba(0,0,0,.035)
 }
-.sheet-face.back{transform:rotateY(180deg)}
-.sheet-face img{display:block;width:100%;height:100%;object-fit:contain}
+.fold-face.back{transform:rotateY(180deg)}
+.fold-face img{position:absolute;top:0;width:800%;height:100%;max-width:none;object-fit:contain}
+.fold-gloss{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(255,255,255,.14),transparent 45%,rgba(0,0,0,.12));opacity:.0}
 .sheet-shadow{
   position:absolute;top:0;width:50%;height:100%;z-index:45;
-  pointer-events:none;opacity:0;filter:blur(6px)
+  pointer-events:none;opacity:0;filter:blur(7px)
 }
-.sheet-shadow.forward{left:50%;background:linear-gradient(90deg,rgba(0,0,0,.30),transparent 60%)}
-.sheet-shadow.backward{left:0;background:linear-gradient(270deg,rgba(0,0,0,.30),transparent 60%)}
+.sheet-shadow.forward{left:50%;background:linear-gradient(90deg,rgba(0,0,0,.34),transparent 64%)}
+.sheet-shadow.backward{left:0;background:linear-gradient(270deg,rgba(0,0,0,.34),transparent 64%)}
 
 .cover{
   position:absolute;inset:0;background:#f2eee5;color:#171614;
@@ -196,56 +199,107 @@ function makeSheet(direction,frontSrc,backSrc){
  const s=document.querySelector('.spread');
  const sheet=document.createElement('div');
  sheet.className='sheet '+direction;
- sheet.innerHTML=
-   `<div class="sheet-face front">${img(frontSrc)}</div>
-    <div class="sheet-face back">${img(backSrc)}</div>`;
-
  const sh=document.createElement('div');
  sh.className='sheet-shadow '+direction;
  s.append(sh,sheet);
 
- requestAnimationFrame(()=>requestAnimationFrame(()=>{
-   sheet.style.transition=`transform ${DURATION}ms ${EASE}`;
-   sh.style.transition=`opacity ${DURATION}ms ease`;
-   sheet.style.transform=direction==='forward'?'rotateY(-180deg)':'rotateY(180deg)';
-   sh.style.opacity='.22';
- }));
+ const N=8;
+ for(let i=0;i<N;i++){
+   const fold=document.createElement('div');
+   fold.className='fold';
+   fold.style.left=(i*100/N)+'%';
+   fold.style.width=(100/N)+'%';
 
+   const f=document.createElement('div');
+   f.className='fold-face front';
+   const b=document.createElement('div');
+   b.className='fold-face back';
+
+   if(frontSrc){
+     const a=document.createElement('img');
+     a.src=frontSrc; a.draggable=false;
+     a.style.left=(-i*100)+'%';
+     const z=document.createElement('img');
+     z.src=backSrc||frontSrc; z.draggable=false;
+     z.style.left=(-i*100)+'%';
+     f.append(a); b.append(z);
+   }
+   fold.append(f,b);
+   sheet.append(fold);
+ }
  return {sheet,sh};
+}
+
+function setSheetProgress(sheet,sh,direction,p,animate){
+ if(!sheet)return;
+ const folds=[...sheet.children];
+ const N=folds.length;
+ const sign=direction==='forward'?1:-1;
+ const baseAngle=(direction==='forward'?-180:180)*p;
+
+ folds.forEach((fold,i)=>{
+   const t=i/(N-1);
+   const curve=Math.sin(t*Math.PI);
+   const angle=baseAngle + sign*(i-(N-1)/2)*7.5*p;
+   const bend=curve*24*p;
+   const lift=curve*16*p;
+   fold.style.transition=animate?`transform ${DURATION}ms ${EASE}`:'none';
+   fold.style.transform=`translate3d(${sign*bend}px,0,${lift}px) rotateY(${angle}deg)`;
+
+   const gloss=fold.querySelector('.fold-gloss');
+   if(gloss) gloss.style.opacity=(.10+.16*curve*p).toFixed(3);
+ });
+ if(sh){
+   sh.style.transition=animate?`opacity ${DURATION}ms ease`:'none';
+   sh.style.opacity=String(.05+.34*Math.sin(p*Math.PI));
+ }
+}
+
+function animateSheet(sheet,sh,direction){
+ requestAnimationFrame(()=>requestAnimationFrame(()=>{
+   setSheetProgress(sheet,sh,direction,1,true);
+ }));
 }
 
 function openBook(){
  if(busy||open)return;
  busy=true;
-
- /* Keep the cover as a single portrait leaf during the animation. */
  book.className='book closed';
  book.innerHTML='';
  const s=document.createElement('div');
  s.className='spread';
  const sheet=document.createElement('div');
  sheet.className='sheet forward';
- sheet.innerHTML=
-   `<div class="sheet-face front">${cover()}</div>
-    <div class="sheet-face back">${img(pages[1])}</div>`;
  const sh=document.createElement('div');
  sh.className='sheet-shadow forward';
- s.append(sheet,sh);
- book.append(s);
+ s.append(sh,sheet); book.append(s);
 
- requestAnimationFrame(()=>requestAnimationFrame(()=>{
-   sheet.style.transition=`transform ${DURATION}ms ${EASE}`;
-   sh.style.transition=`opacity ${DURATION}ms ease`;
-   sheet.style.transform='rotateY(-180deg)';
-   sh.style.opacity='.22';
- }));
+ const N=8;
+ for(let i=0;i<N;i++){
+   const fold=document.createElement('div');
+   fold.className='fold';
+   fold.style.left=(i*100/N)+'%';
+   fold.style.width=(100/N)+'%';
+
+   const f=document.createElement('div');
+   f.className='fold-face front';
+   f.innerHTML=cover();
+   const b=document.createElement('div');
+   b.className='fold-face back';
+   b.innerHTML=img(pages[1]);
+
+   const cv=f.querySelector('.cover');
+   cv.style.width=N*100+'%';
+   cv.style.left=(-i*100)+'%';
+
+   fold.append(f,b);
+   sheet.append(fold);
+ }
+ animateSheet(sheet,sh,'forward');
 
  setTimeout(()=>{
-   open=true;
-   spread=0;
-   renderSpread();
-   busy=false;
- },DURATION+35);
+   open=true; spread=0; renderSpread(); busy=false;
+ },DURATION+40);
 }
 
 function forward(){
@@ -253,47 +307,42 @@ function forward(){
  const next=spread+1;
  const nextLeft=1+next*2;
  if(nextLeft>=TOTAL)return;
-
  busy=true;
  const currentRight=2+spread*2;
- const nextLeftSrc=pages[nextLeft];
-
- const {sheet,sh}=makeSheet('forward',pages[currentRight],nextLeftSrc);
+ const {sheet,sh}=makeSheet('forward',pages[currentRight],pages[nextLeft]);
+ animateSheet(sheet,sh,'forward');
  setTimeout(()=>{
-   spread=next;
-   renderSpread();
-   busy=false;
- },DURATION+35);
+   spread=next; renderSpread(); busy=false;
+ },DURATION+40);
 }
 
 function back(){
  if(busy||!open)return;
-
  busy=true;
 
  if(spread===0){
-   /* Page 2 folds back and reveals the cover. */
    const {sheet,sh}=makeSheet('backward',pages[1],null);
-   sheet.querySelector('.back').innerHTML=cover();
-
+   const folds=[...sheet.children];
+   folds.forEach((fold,i)=>{
+     fold.querySelector('.back').innerHTML=cover();
+     const cv=fold.querySelector('.back .cover');
+     cv.style.width=folds.length*100+'%';
+     cv.style.left=(-i*100)+'%';
+   });
+   animateSheet(sheet,sh,'backward');
    setTimeout(()=>{
-     open=false;
-     renderClosed();
-     busy=false;
-   },DURATION+35);
+     open=false; renderClosed(); busy=false;
+   },DURATION+40);
    return;
  }
 
  const currentLeft=1+spread*2;
  const previousRight=1+(spread-1)*2+1;
-
- makeSheet('backward',pages[currentLeft],pages[previousRight]);
-
+ const {sheet,sh}=makeSheet('backward',pages[currentLeft],pages[previousRight]);
+ animateSheet(sheet,sh,'backward');
  setTimeout(()=>{
-   spread--;
-   renderSpread();
-   busy=false;
- },DURATION+35);
+   spread--; renderSpread(); busy=false;
+ },DURATION+40);
 }
 
 /* Touch/mouse drag: intentionally restrained to keep the stable layout intact. */
@@ -301,21 +350,18 @@ book.addEventListener('pointerdown',e=>{
  if(busy)return;
  drag={x:e.clientX};
 });
-
 book.addEventListener('pointerup',e=>{
  if(!drag)return;
  const dx=e.clientX-drag.x;
  drag=null;
  const threshold=Math.max(42,book.getBoundingClientRect().width*.10);
-
  if(!open){
-   if(dx<-threshold || Math.abs(dx)<threshold) openBook();
+   if(dx<0 || Math.abs(dx)<threshold) openBook();
    return;
  }
  if(dx<-threshold) forward();
  else if(dx>threshold) back();
 });
-
 book.addEventListener('pointercancel',()=>{drag=null});
 
 zoneRight.onclick=()=>{};
