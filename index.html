@@ -341,7 +341,14 @@ function beginDrag(direction){
 }
 
 function pointerDown(e){
-  if(busy||!open)return;
+  if(busy)return;
+
+  // The cover must respond while the book is closed.
+  if(!open){
+    openBook();
+    return;
+  }
+
   drag={x:e.clientX, rect:book.getBoundingClientRect(), direction:null, moved:false};
 }
 
@@ -424,9 +431,25 @@ function pointerCancel(){
 }
 
 book.addEventListener('pointerdown',pointerDown);
+
+// Explicit tap/click fallback for the closed cover.
+book.addEventListener('click',()=>{
+  if(!open && !busy) openBook();
+});
+
 book.addEventListener('pointermove',pointerMove);
 book.addEventListener('pointerup',pointerUp);
 book.addEventListener('pointercancel',pointerCancel);
+
+document.querySelector('.zone.right').addEventListener('click',()=>{
+  if(busy)return;
+  if(!open){ openBook(); return; }
+  goForward();
+});
+document.querySelector('.zone.left').addEventListener('click',()=>{
+  if(busy||!open)return;
+  goBack();
+});
 
 // Start closed.
 book.className='book closed';
