@@ -278,7 +278,7 @@ function goBack(){
   // From the first spread, flip the left page back to the cover.
   if(spread===0){
     busy=true;
-    const f=makeFlip('backward',pages[1],pages[0]);
+    const f=makeFlip('backward',pages[0],null);
     setTransition(true);
     requestAnimationFrame(()=>requestAnimationFrame(()=>setAngle(180)));
 
