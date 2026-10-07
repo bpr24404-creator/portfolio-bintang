@@ -43,14 +43,25 @@ body{
 .flip{
   position:absolute;top:0;width:50%;height:100%;z-index:40;
   transform-style:preserve-3d;backface-visibility:visible;
-  will-change:transform;pointer-events:auto;cursor:pointer
+  will-change:transform;pointer-events:auto;cursor:pointer;isolation:isolate
 }
 .flip.forward{left:50%;transform-origin:left center}
 .flip.backward{left:0;transform-origin:right center}
 .flip-face{
   position:absolute;inset:0;overflow:hidden;background:#f7f5ef;
   backface-visibility:hidden;
-  box-shadow:inset 0 0 0 1px rgba(0,0,0,.035)
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.035);
+  transform-style:preserve-3d;
+}
+.flip-face:after{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:var(--curl,0);
+  background:linear-gradient(90deg,rgba(0,0,0,.34) 0%,rgba(0,0,0,.12) 18%,transparent 42%,rgba(255,255,255,.16) 78%,transparent 100%);
+  mix-blend-mode:multiply;
+  transition:opacity 80ms linear
+}
+.flip-face.back:after{
+  background:linear-gradient(270deg,rgba(0,0,0,.30) 0%,rgba(0,0,0,.10) 18%,transparent 44%,rgba(255,255,255,.13) 78%,transparent 100%);
+  mix-blend-mode:multiply
 }
 .flip-face.back{transform:rotateY(180deg)}
 .flip.forward .flip-face.front{box-shadow:-13px 0 22px rgba(0,0,0,.11)}
@@ -59,8 +70,8 @@ body{
   position:absolute;top:0;width:50%;height:100%;z-index:30;pointer-events:none;
   opacity:0;filter:blur(5px);will-change:opacity
 }
-.flip-shadow.forward{left:50%;background:linear-gradient(90deg,rgba(0,0,0,.30),rgba(0,0,0,.04),transparent)}
-.flip-shadow.backward{left:0;background:linear-gradient(270deg,rgba(0,0,0,.30),rgba(0,0,0,.04),transparent)}
+.flip-shadow.forward{left:50%;background:linear-gradient(90deg,rgba(0,0,0,.38),rgba(0,0,0,.12),transparent)}
+.flip-shadow.backward{left:0;background:linear-gradient(270deg,rgba(0,0,0,.38),rgba(0,0,0,.12),transparent)}
 .flip.dragging{transition:none!important}
 
 .cover{
@@ -114,6 +125,7 @@ body{
 <script>
 const TOTAL=17;
 const pages=Array.from({length:TOTAL},(_,i)=>`page_${String(i+1).padStart(2,'0')}.jpg`);
+const preload=pages.map(src=>{const im=new Image(); im.decoding='async'; im.src=src; return im;});
 const book=document.getElementById('book');
 const counter=document.getElementById('counter');
 const hint=document.getElementById('hint');
@@ -125,8 +137,8 @@ let drag=null;
 let flipEl=null;
 let shadowEl=null;
 
-const EASE='cubic-bezier(.22,.72,.18,1)';
-const DURATION=680;
+const EASE='cubic-bezier(.16,.78,.18,1)';
+const DURATION=760;
 
 function img(src){ return `<img src="${src}" draggable="false" alt="">`; }
 function cover(){
@@ -217,9 +229,17 @@ function setTransition(on){
 
 function setAngle(deg){
   if(!flipEl)return;
-  flipEl.style.transform=`rotateY(${deg}deg)`;
   const p=Math.min(1,Math.abs(deg)/180);
-  if(shadowEl)shadowEl.style.opacity=String(.06+.30*Math.sin(p*Math.PI));
+  const side=deg<0?-1:1;
+  const lift=Math.sin(p*Math.PI);
+  const depth=10*lift;
+  const tilt=-1.8*lift*side;
+  flipEl.style.transform=`translateZ(${depth}px) rotateX(${tilt}deg) rotateY(${deg}deg)`;
+  flipEl.style.setProperty('--curl',String(.08+.48*lift));
+  if(shadowEl){
+    shadowEl.style.opacity=String(.05+.34*lift);
+    shadowEl.style.transform=`translateX(${side*10*lift}px) scaleX(${.82+.28*lift})`;
+  }
 }
 
 function openBook(){
@@ -354,6 +374,7 @@ function pointerDown(e){
 
 function pointerMove(e){
   if(!drag||busy||!open)return;
+  drag.lastX=e.clientX;
   const dx=e.clientX-drag.x;
   if(Math.abs(dx)<7)return;
 
