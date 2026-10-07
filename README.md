@@ -1,1 +1,1 @@
-V12 Embedded — all 17 page images are inside index.html. Upload only index.html and manifest.webmanifest.
+Bintang Putra A.S. — Digital Magazine A4 FIT V13 Curl. Built from V12 embedded baseline; page assets remain embedded in index.html.
