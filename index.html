@@ -13,472 +13,208 @@ body{
   display:flex;align-items:center;justify-content:center;
   touch-action:none;-webkit-user-select:none;user-select:none
 }
-.stage{width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;perspective:2400px}
-.book{
-  position:relative;width:min(94vw,124.5vh);aspect-ratio:1.41421356/1;
-  max-height:88vh;transform-style:preserve-3d;
-  filter:drop-shadow(0 25px 38px rgba(0,0,0,.42))
+.stage{
+  width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;
+  position:relative;padding:5vh 3vw
 }
-.book.closed{width:min(66.5vw,62.25vh);aspect-ratio:.70710678/1}
-.book.closed .spread{display:block}
-.book.closed .page.left{display:none}
-.book.closed .page.right{width:100%;height:100%}
-.book.closed .flip.forward{left:0;width:100%;transform-origin:left center}
-.spread{position:absolute;inset:0;display:flex;background:#f7f5ef;transform-style:preserve-3d}
+#book{
+  width:min(94vw,120vh);
+  height:min(84vh,90vw);
+  max-width:1500px;max-height:1200px;
+  position:relative;
+}
 .page{
-  position:relative;width:50%;height:100%;overflow:hidden;background:#f7f5ef;
-  box-shadow:inset 0 0 0 1px rgba(0,0,0,.035)
+  background:#f7f5ef;color:#171614;
+  overflow:hidden;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.045)
 }
-.page img,.flip-face img{width:100%;height:100%;display:block;object-fit:contain;pointer-events:none}
-.page.left{box-shadow:inset -10px 0 18px rgba(0,0,0,.055)}
-.page.right{box-shadow:inset 10px 0 18px rgba(0,0,0,.055)}
-.spine{
-  position:absolute;left:50%;top:0;width:10px;height:100%;z-index:20;
-  transform:translateX(-50%);
-  background:linear-gradient(90deg,rgba(0,0,0,.16),rgba(255,255,255,.25),rgba(0,0,0,.11));
-  box-shadow:0 0 13px rgba(0,0,0,.12);pointer-events:none
+.page img{
+  display:block;width:100%;height:100%;
+  object-fit:contain;background:#f7f5ef
 }
-
-/* The only moving page. Nothing is rebuilt during a flip. */
-.flip{
-  position:absolute;top:0;width:50%;height:100%;z-index:40;
-  transform-style:preserve-3d;backface-visibility:visible;
-  will-change:transform;pointer-events:auto;cursor:pointer;isolation:isolate
-}
-.flip.forward{left:50%;transform-origin:left center}
-.flip.backward{left:0;transform-origin:right center}
-.flip-face{
-  position:absolute;inset:0;overflow:hidden;background:#f7f5ef;
-  backface-visibility:hidden;
-  box-shadow:inset 0 0 0 1px rgba(0,0,0,.035);
-  transform-style:preserve-3d;
-}
-.flip-face:after{
-  content:"";position:absolute;inset:0;pointer-events:none;opacity:var(--curl,0);
-  background:linear-gradient(90deg,rgba(0,0,0,.34) 0%,rgba(0,0,0,.12) 18%,transparent 42%,rgba(255,255,255,.16) 78%,transparent 100%);
-  mix-blend-mode:multiply;
-  transition:opacity 80ms linear
-}
-.flip-face.back:after{
-  background:linear-gradient(270deg,rgba(0,0,0,.30) 0%,rgba(0,0,0,.10) 18%,transparent 44%,rgba(255,255,255,.13) 78%,transparent 100%);
-  mix-blend-mode:multiply
-}
-.flip-face.back{transform:rotateY(180deg)}
-.flip.forward .flip-face.front{box-shadow:-13px 0 22px rgba(0,0,0,.11)}
-.flip.backward .flip-face.front{box-shadow:13px 0 22px rgba(0,0,0,.11)}
-.flip-shadow{
-  position:absolute;top:0;width:50%;height:100%;z-index:30;pointer-events:none;
-  opacity:0;filter:blur(5px);will-change:opacity
-}
-.flip-shadow.forward{left:50%;background:linear-gradient(90deg,rgba(0,0,0,.38),rgba(0,0,0,.12),transparent)}
-.flip-shadow.backward{left:0;background:linear-gradient(270deg,rgba(0,0,0,.38),rgba(0,0,0,.12),transparent)}
-.flip.dragging{transition:none!important}
-
 .cover{
-  position:absolute;inset:0;background:#f2eee5;color:#171614;
-  display:flex;align-items:center;justify-content:center;overflow:hidden
+  width:100%;height:100%;background:#f2eee5;color:#171614;
+  position:relative;display:flex;align-items:center;justify-content:center;
+  overflow:hidden
 }
-.cover:before,.cover:after{content:"";position:absolute;pointer-events:none;border:1px solid rgba(23,22,20,.12)}
+.cover:before,.cover:after{
+  content:"";position:absolute;pointer-events:none;
+  border:1px solid rgba(23,22,20,.12)
+}
 .cover:before{inset:4.2%}.cover:after{inset:5.2%}
 .cover-grid{
   position:absolute;inset:0;
-  background-image:linear-gradient(rgba(23,22,20,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(23,22,20,.035) 1px,transparent 1px);
+  background-image:
+    linear-gradient(rgba(23,22,20,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(23,22,20,.035) 1px,transparent 1px);
   background-size:26px 26px;opacity:.45
 }
 .cover-content{position:relative;z-index:2;text-align:center;padding:10%;width:100%}
-.cover-kicker{font-size:10px;letter-spacing:.32em;text-transform:uppercase;margin-bottom:30px;opacity:.62}
-.cover-title{font-family:Georgia,serif;font-size:clamp(30px,5vw,66px);line-height:.92;letter-spacing:-.035em;margin:0}
-.cover-sub{font-size:11px;letter-spacing:.24em;text-transform:uppercase;margin-top:25px;opacity:.7}
+.cover-kicker{
+  font-size:10px;letter-spacing:.32em;text-transform:uppercase;
+  margin-bottom:30px;opacity:.62
+}
+.cover-title{
+  font-family:Georgia,serif;font-size:clamp(30px,5vw,66px);
+  line-height:.92;letter-spacing:-.035em;margin:0
+}
+.cover-sub{
+  font-size:11px;letter-spacing:.24em;text-transform:uppercase;
+  margin-top:25px;opacity:.7
+}
 .cover-rule{width:52px;height:1px;background:#171614;margin:25px auto 0;opacity:.4}
-.cover-mark{position:absolute;left:7%;bottom:6%;font-size:8px;letter-spacing:.18em;text-transform:uppercase;opacity:.48}
-.cover-code{position:absolute;right:7%;top:6%;font-size:8px;letter-spacing:.18em;opacity:.48}
-
+.cover-mark{
+  position:absolute;left:7%;bottom:6%;font-size:8px;
+  letter-spacing:.18em;text-transform:uppercase;opacity:.48
+}
+.cover-code{
+  position:absolute;right:7%;top:6%;font-size:8px;
+  letter-spacing:.18em;opacity:.48
+}
 .hint,.counter{
   position:fixed;z-index:100;left:50%;transform:translateX(-50%);
-  color:rgba(255,255,255,.68);background:rgba(20,19,17,.62);
-  border:1px solid rgba(255,255,255,.10);backdrop-filter:blur(8px)
+  color:rgba(255,255,255,.72);background:rgba(20,19,17,.66);
+  border:1px solid rgba(255,255,255,.11);backdrop-filter:blur(8px)
 }
-.hint{top:16px;font-size:10px;letter-spacing:.16em;padding:8px 13px;border-radius:999px;white-space:nowrap}
-.counter{bottom:16px;font-size:11px;letter-spacing:.12em;padding:7px 12px;border-radius:999px}
-.zone{position:fixed;z-index:90;top:0;height:100%;width:22%;opacity:0}
-.zone.left{left:0}.zone.right{right:0}
+.hint{
+  top:15px;font-size:10px;letter-spacing:.15em;padding:8px 13px;
+  border-radius:999px;white-space:nowrap
+}
+.counter{
+  bottom:15px;font-size:11px;letter-spacing:.12em;
+  padding:7px 12px;border-radius:999px
+}
+.nav{
+  position:fixed;z-index:101;top:0;height:100%;width:18%;
+  opacity:0;cursor:pointer
+}
+.nav.left{left:0}.nav.right{right:0}
+.book-shadow{
+  position:fixed;inset:auto 10% 4%;height:7%;
+  background:radial-gradient(ellipse,rgba(0,0,0,.38),transparent 70%);
+  filter:blur(10px);pointer-events:none
+}
+
+/* StPageFlip owns the page geometry and curl animation. */
+.stf__parent{margin:auto!important}
+.stf__block{background:transparent!important}
+.stf__item{
+  background:#f7f5ef!important;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.04)
+}
+.stf__canvas{background:transparent!important}
 
 @media(max-width:700px){
-  body{background:#11100f}
-  .book,.book.closed{width:min(88vw,62.23vh);aspect-ratio:.70710678/1;max-height:86vh}
-  .spread{display:block}
-  .page{width:100%;display:none}
-  .page.mobile-current{display:block}
-  .spine{display:none}
-  .flip,.flip.forward,.flip.backward{left:0;width:100%;transform-origin:left center}
-  .flip-shadow,.flip-shadow.forward,.flip-shadow.backward{left:0;width:100%}
-  .hint{top:11px;font-size:9px}.counter{bottom:11px}
+  .stage{padding:4vh 3vw}
+  #book{width:min(90vw,62vh);height:min(84vh,125vw)}
+  .hint{top:10px;font-size:9px}
+  .counter{bottom:10px}
+  .nav{width:25%}
 }
 </style>
 </head>
 <body>
-<div class="stage"><div class="book closed" id="book"></div></div>
+<div class="stage">
+  <div id="book"></div>
+</div>
+<div class="book-shadow"></div>
 <div class="hint" id="hint">SENTUH / GESER UNTUK MEMBUKA</div>
 <div class="counter" id="counter">COVER</div>
-<div class="zone left"></div><div class="zone right"></div>
+<div class="nav left" id="prev" aria-label="Halaman sebelumnya"></div>
+<div class="nav right" id="next" aria-label="Halaman berikutnya"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
 <script>
 const TOTAL=17;
-const pages=Array.from({length:TOTAL},(_,i)=>`page_${String(i+1).padStart(2,'0')}.jpg`);
-const preload=pages.map(src=>{const im=new Image(); im.decoding='async'; im.src=src; return im;});
 const book=document.getElementById('book');
 const counter=document.getElementById('counter');
 const hint=document.getElementById('hint');
 
-let open=false;
-let spread=0; // 0 = pages 2–3, 1 = pages 4–5, ...
-let busy=false;
-let drag=null;
-let flipEl=null;
-let shadowEl=null;
-
-const EASE='cubic-bezier(.16,.78,.18,1)';
-const DURATION=760;
-
-function img(src){ return `<img src="${src}" draggable="false" alt="">`; }
-function cover(){
- return `<div class="cover">
-   <div class="cover-grid"></div>
-   <div class="cover-content">
-     <div class="cover-kicker">Digital Architecture Document</div>
-     <h1 class="cover-title">BINTANG<br>PUTRA A.S.</h1>
-     <div class="cover-sub">CV &amp; PORTFOLIO</div>
-     <div class="cover-rule"></div>
-   </div>
-   <div class="cover-mark">Architecture · Interior · Visualization</div>
-   <div class="cover-code">A.S. / 2026</div>
- </div>`;
+function coverHTML(){
+  return `<div class="cover">
+    <div class="cover-grid"></div>
+    <div class="cover-content">
+      <div class="cover-kicker">Digital Architecture Document</div>
+      <h1 class="cover-title">BINTANG<br>PUTRA A.S.</h1>
+      <div class="cover-sub">CV &amp; PORTFOLIO</div>
+      <div class="cover-rule"></div>
+    </div>
+    <div class="cover-mark">Architecture · Interior · Visualization</div>
+    <div class="cover-code">A.S. / 2026</div>
+  </div>`;
 }
 
-function makeBase(){
-  book.className='book';
-  book.innerHTML='';
-  const s=document.createElement('div');
-  s.className='spread';
-
-  const left=document.createElement('div');
-  left.className='page left';
-  left.id='leftPage';
-
-  const right=document.createElement('div');
-  right.className='page right';
-  right.id='rightPage';
-
-  const spine=document.createElement('div');
-  spine.className='spine';
-
-  s.append(left,right,spine);
-  book.append(s);
-
-  setBaseImages();
-  updateCounter();
+const pages=[];
+pages.push(`<div class="page" data-density="hard">${coverHTML()}</div>`);
+for(let i=2;i<=17;i++){
+  const hard=i===17?' data-density="hard"':'';
+  pages.push(`<div class="page"${hard}><img src="pages/page_${String(i).padStart(2,'0')}.jpg" alt=""></div>`);
 }
+book.innerHTML=pages.join('');
 
-function setBaseImages(){
-  const l=1+spread*2;
-  const r=l+1;
-  const left=document.getElementById('leftPage');
-  const right=document.getElementById('rightPage');
-  if(!left||!right)return;
-
-  left.innerHTML = pages[l] ? img(pages[l]) : '';
-  right.innerHTML = pages[r] ? img(pages[r]) : '';
-
-  if(window.innerWidth<=700){
-    left.classList.add('mobile-current');
-    right.classList.remove('mobile-current');
-  }
-}
-
-function updateCounter(){
-  const l=1+spread*2;
-  const r=Math.min(l+1,TOTAL-1);
-  counter.textContent=`${l+1}–${r+1} / ${TOTAL}`;
-}
-
-function makeFlip(direction,frontSrc,backSrc){
-  removeFlip();
-  const f=document.createElement('div');
-  f.className=`flip ${direction}`;
-  f.innerHTML=`<div class="flip-face front">${frontSrc?img(frontSrc):''}</div>
-               <div class="flip-face back">${backSrc?img(backSrc):''}</div>`;
-
-  const sh=document.createElement('div');
-  sh.className=`flip-shadow ${direction}`;
-
-  book.querySelector('.spread').append(sh,f);
-  flipEl=f; shadowEl=sh;
-  return f;
-}
-
-function removeFlip(){
-  if(flipEl)flipEl.remove();
-  if(shadowEl)shadowEl.remove();
-  flipEl=null;shadowEl=null;
-}
-
-function setTransition(on){
-  if(!flipEl)return;
-  flipEl.style.transition=on?`transform ${DURATION}ms ${EASE}`:'none';
-}
-
-function setAngle(deg){
-  if(!flipEl)return;
-  const p=Math.min(1,Math.abs(deg)/180);
-  const side=deg<0?-1:1;
-  const lift=Math.sin(p*Math.PI);
-  const depth=10*lift;
-  const tilt=-1.8*lift*side;
-  flipEl.style.transform=`translateZ(${depth}px) rotateX(${tilt}deg) rotateY(${deg}deg)`;
-  flipEl.style.setProperty('--curl',String(.08+.48*lift));
-  if(shadowEl){
-    shadowEl.style.opacity=String(.05+.34*lift);
-    shadowEl.style.transform=`translateX(${side*10*lift}px) scaleX(${.82+.28*lift})`;
-  }
-}
-
-function openBook(){
-  if(busy||open)return;
-  busy=true;
-
-  // Cover is a single A4 leaf. Its back becomes page 2.
-  book.className='book closed';
-  const s=book.querySelector('.spread');
-  s.innerHTML='';
-
-  const f=document.createElement('div');
-  f.className='flip forward';
-  f.innerHTML=`<div class="flip-face front">${cover()}</div>
-               <div class="flip-face back">${img(pages[1])}</div>`;
-  s.append(f);
-  flipEl=f;
-
-  const sh=document.createElement('div');
-  sh.className='flip-shadow forward';
-  s.append(sh);
-  shadowEl=sh;
-
-  setTransition(true);
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{
-    setAngle(-180);
-  }));
-
-  setTimeout(()=>{
-    open=true;
-    spread=0;
-    makeBase();
-    busy=false;
-    hint.textContent='GESER / SENTUH SISI KANAN ATAU KIRI';
-  },DURATION+35);
-}
-
-function goForward(){
-  if(busy||!open)return;
-  const next=spread+1;
-  const nextLeft=1+next*2;
-  if(nextLeft>=TOTAL)return;
-
-  busy=true;
-  const currentRight=2+spread*2;
-  const f=makeFlip('forward',pages[currentRight],pages[nextLeft]);
-  setTransition(true);
-  requestAnimationFrame(()=>requestAnimationFrame(()=>setAngle(-180)));
-
-  setTimeout(()=>{
-    spread=next;
-    makeBase();
-    busy=false;
-  },DURATION+25);
-}
-
-function goBack(){
-  if(busy||!open)return;
-
-  // From the first spread, flip the left page back to the cover.
-  if(spread===0){
-    busy=true;
-    const f=makeFlip('backward',pages[0],null);
-    setTransition(true);
-    requestAnimationFrame(()=>requestAnimationFrame(()=>setAngle(180)));
-
-    setTimeout(()=>{
-      open=false;
-      book.className='book closed';
-      book.innerHTML='';
-      const s=document.createElement('div');
-      s.className='spread';
-      const blank=document.createElement('div'); blank.className='page left';
-      const c=document.createElement('div'); c.className='page right'; c.innerHTML=cover();
-      s.append(blank,c);
-      book.append(s);
-      counter.textContent='COVER';
-      hint.textContent='SENTUH / GESER UNTUK MEMBUKA';
-      busy=false;
-    },DURATION+25);
-    return;
-  }
-
-  const next=spread-1;
-  const currentLeft=1+spread*2;
-  const previousRight=1+next*2+1;
-
-  busy=true;
-  makeFlip('backward',pages[currentLeft],pages[previousRight]);
-  setTransition(true);
-  requestAnimationFrame(()=>requestAnimationFrame(()=>setAngle(180)));
-
-  setTimeout(()=>{
-    spread=next;
-    makeBase();
-    busy=false;
-  },DURATION+25);
-}
-
-function beginDrag(direction){
-  if(direction==='forward'){
-    const next=spread+1;
-    const nextLeft=1+next*2;
-    if(nextLeft>=TOTAL)return false;
-    const currentRight=2+spread*2;
-    makeFlip('forward',pages[currentRight],pages[nextLeft]);
-  }else{
-    if(spread===0){
-      makeFlip('backward',pages[0],null);
-    }else{
-      const currentLeft=1+spread*2;
-      const previousRight=1+(spread-1)*2+1;
-      makeFlip('backward',pages[currentLeft],pages[previousRight]);
-    }
-  }
-  setTransition(false);
-  setAngle(0);
-  return true;
-}
-
-function pointerDown(e){
-  if(busy)return;
-
-  // The cover must respond while the book is closed.
-  if(!open){
-    openBook();
-    return;
-  }
-
-  drag={x:e.clientX, rect:book.getBoundingClientRect(), direction:null, moved:false};
-}
-
-function pointerMove(e){
-  if(!drag||busy||!open)return;
-  drag.lastX=e.clientX;
-  const dx=e.clientX-drag.x;
-  if(Math.abs(dx)<7)return;
-
-  if(!drag.direction){
-    drag.direction=dx<0?'forward':'backward';
-    drag.moved=true;
-    if(!beginDrag(drag.direction)){
-      drag=null;
-      return;
-    }
-  }
-
-  const w=Math.max(1,drag.rect.width/2);
-  const p=Math.max(0,Math.min(1,Math.abs(dx)/w));
-  const angle=(drag.direction==='forward'?-180:180)*p;
-  setTransition(false);
-  setAngle(angle);
-}
-
-function finishDrag(commit){
-  if(!drag||!flipEl)return;
-  const dir=drag.direction;
-  const threshold=Math.max(42,drag.rect.width*.12);
-  const dx=drag.lastX-drag.x;
-  const shouldCommit=commit && Math.abs(dx)>=threshold;
-  drag=null;
-
-  if(!shouldCommit){
-    setTransition(true);
-    setAngle(0);
-    setTimeout(removeFlip,DURATION+20);
-    return;
-  }
-
-  busy=true;
-  setTransition(true);
-  setAngle(dir==='forward'?-180:180);
-  setTimeout(()=>{
-    if(dir==='forward'){
-      spread+=1;
-      makeBase();
-    }else if(spread===0){
-      open=false;
-      book.className='book closed';
-      book.innerHTML='';
-      const s=document.createElement('div');s.className='spread';
-      const blank=document.createElement('div');blank.className='page left';
-      const c=document.createElement('div');c.className='page right';c.innerHTML=cover();
-      s.append(blank,c);book.append(s);
-      counter.textContent='COVER';
-      hint.textContent='SENTUH / GESER UNTUK MEMBUKA';
-    }else{
-      spread-=1;
-      makeBase();
-    }
-    busy=false;
-  },DURATION+25);
-}
-
-function pointerUp(e){
-  if(!drag)return;
-  drag.lastX=e.clientX;
-  if(!drag.direction){drag=null;return;}
-  finishDrag(true);
-}
-
-function pointerCancel(){
-  if(!drag)return;
-  if(flipEl){
-    setTransition(true);
-    setAngle(0);
-    setTimeout(removeFlip,DURATION+20);
-  }
-  drag=null;
-}
-
-book.addEventListener('pointerdown',pointerDown);
-
-// Explicit tap/click fallback for the closed cover.
-book.addEventListener('click',()=>{
-  if(!open && !busy) openBook();
+const flip = new St.PageFlip(book,{
+  width:794,
+  height:1123,
+  size:"stretch",
+  minWidth:280,
+  maxWidth:1000,
+  minHeight:395,
+  maxHeight:1414,
+  drawShadow:true,
+  maxShadowOpacity:.42,
+  flippingTime:820,
+  usePortrait:true,
+  startPage:0,
+  autoSize:true,
+  showCover:true,
+  mobileScrollSupport:true,
+  swipeDistance:24,
+  useMouseEvents:true,
+  showPageCorners:true,
+  disableFlipByClick:false
 });
 
-book.addEventListener('pointermove',pointerMove);
-book.addEventListener('pointerup',pointerUp);
-book.addEventListener('pointercancel',pointerCancel);
+function setCounter(index){
+  if(index===0){
+    counter.textContent='COVER';
+    hint.textContent='SENTUH / GESER UNTUK MEMBUKA';
+    return;
+  }
+  hint.textContent='GESER / SENTUH SISI KANAN ATAU KIRI';
+  if(index>=16){
+    counter.textContent='17 / 17';
+    return;
+  }
+  // In landscape, the event index is the left page of the visible spread.
+  const left=index+1;
+  const right=Math.min(index+2,TOTAL);
+  counter.textContent=`${left}–${right} / ${TOTAL}`;
+}
 
-document.querySelector('.zone.right').addEventListener('click',()=>{
-  if(busy)return;
-  if(!open){ openBook(); return; }
-  goForward();
+flip.on('init',e=>setCounter(e.data));
+flip.on('flip',e=>setCounter(e.data));
+
+document.getElementById('next').addEventListener('click',()=>{
+  const i=flip.getCurrentPageIndex();
+  if(i<TOTAL-1) flip.flipNext('bottom');
 });
-document.querySelector('.zone.left').addEventListener('click',()=>{
-  if(busy||!open)return;
-  goBack();
+document.getElementById('prev').addEventListener('click',()=>{
+  const i=flip.getCurrentPageIndex();
+  if(i>0) flip.flipPrev('bottom');
 });
 
-// Start closed.
-book.className='book closed';
-book.innerHTML='';
-const s=document.createElement('div');s.className='spread';
-const blank=document.createElement('div');blank.className='page left';
-const c=document.createElement('div');c.className='page right';c.innerHTML=cover();
-s.append(blank,c);book.append(s);
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '){
+    e.preventDefault();
+    if(flip.getCurrentPageIndex()<TOTAL-1) flip.flipNext('bottom');
+  }
+  if(e.key==='ArrowLeft'){
+    e.preventDefault();
+    if(flip.getCurrentPageIndex()>0) flip.flipPrev('bottom');
+  }
+});
+
+flip.loadFromHTML(document.querySelectorAll('.page'));
 </script>
 </body>
 </html>

@@ -1,1 +1,1 @@
-Bintang Putra A.S. — Digital Magazine A4 FIT V7.\nUpload index.html, manifest.webmanifest, and the pages/ folder to the repository root.\n
+Bintang Putra A.S. — Digital Magazine A4 FIT V9.\nV9 uses StPageFlip 2.0.7 for the page-curl animation.\nUpload index.html, manifest.webmanifest and pages/ to the repository root.\n
