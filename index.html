@@ -122,7 +122,7 @@ let flipEl=null;
 let shadowEl=null;
 
 const EASE='cubic-bezier(.22,.72,.18,1)';
-const DURATION=720;
+const DURATION=680;
 
 function img(src){ return `<img src="${src}" draggable="false" alt="">`; }
 function cover(){
@@ -315,68 +315,114 @@ function goBack(){
   },DURATION+25);
 }
 
+function beginDrag(direction){
+  if(direction==='forward'){
+    const next=spread+1;
+    const nextLeft=1+next*2;
+    if(nextLeft>=TOTAL)return false;
+    const currentRight=2+spread*2;
+    makeFlip('forward',pages[currentRight],pages[nextLeft]);
+  }else{
+    if(spread===0){
+      makeFlip('backward',pages[1],pages[0]);
+    }else{
+      const currentLeft=1+spread*2;
+      const previousRight=1+(spread-1)*2+1;
+      makeFlip('backward',pages[currentLeft],pages[previousRight]);
+    }
+  }
+  setTransition(false);
+  setAngle(0);
+  return true;
+}
+
 function pointerDown(e){
-  if(busy)return;
-  const target=e.currentTarget;
-  const rect=target.getBoundingClientRect();
-  drag={x:e.clientX,startAngle:0,rect};
-  target.setPointerCapture?.(e.pointerId);
-  target.classList.add('dragging');
+  if(busy||!open)return;
+  drag={x:e.clientX, rect:book.getBoundingClientRect(), direction:null, moved:false};
 }
 
 function pointerMove(e){
-  if(!drag||!flipEl)return;
+  if(!drag||busy||!open)return;
   const dx=e.clientX-drag.x;
-  const w=drag.rect.width;
+  if(Math.abs(dx)<7)return;
+
+  if(!drag.direction){
+    drag.direction=dx<0?'forward':'backward';
+    drag.moved=true;
+    if(!beginDrag(drag.direction)){
+      drag=null;
+      return;
+    }
+  }
+
+  const w=Math.max(1,drag.rect.width/2);
   const p=Math.max(0,Math.min(1,Math.abs(dx)/w));
-  const sign=dx<0?-1:1;
-  const angle=sign*180*p;
-  flipEl.style.transition='none';
+  const angle=(drag.direction==='forward'?-180:180)*p;
+  setTransition(false);
   setAngle(angle);
 }
 
-function pointerUp(e){
+function finishDrag(commit){
   if(!drag||!flipEl)return;
-  const dx=e.clientX-drag.x;
-  const threshold=Math.max(42,drag.rect.width*.16);
+  const dir=drag.direction;
+  const threshold=Math.max(42,drag.rect.width*.12);
+  const dx=drag.lastX-drag.x;
+  const shouldCommit=commit && Math.abs(dx)>=threshold;
   drag=null;
-  flipEl.classList.remove('dragging');
 
-  if(dx < -threshold){ // forward
-    setTransition(true); setAngle(-180);
-    setTimeout(()=>{ removeFlip(); if(open)goForward(); },DURATION+20);
-  }else if(dx > threshold){ // backward
-    setTransition(true); setAngle(180);
-    setTimeout(()=>{ removeFlip(); if(open)goBack(); },DURATION+20);
-  }else{
+  if(!shouldCommit){
+    setTransition(true);
+    setAngle(0);
+    setTimeout(removeFlip,DURATION+20);
+    return;
+  }
+
+  busy=true;
+  setTransition(true);
+  setAngle(dir==='forward'?-180:180);
+  setTimeout(()=>{
+    if(dir==='forward'){
+      spread+=1;
+      makeBase();
+    }else if(spread===0){
+      open=false;
+      book.className='book closed';
+      book.innerHTML='';
+      const s=document.createElement('div');s.className='spread';
+      const blank=document.createElement('div');blank.className='page left';
+      const c=document.createElement('div');c.className='page right';c.innerHTML=cover();
+      s.append(blank,c);book.append(s);
+      counter.textContent='COVER';
+      hint.textContent='SENTUH / GESER UNTUK MEMBUKA';
+    }else{
+      spread-=1;
+      makeBase();
+    }
+    busy=false;
+  },DURATION+25);
+}
+
+function pointerUp(e){
+  if(!drag)return;
+  drag.lastX=e.clientX;
+  if(!drag.direction){drag=null;return;}
+  finishDrag(true);
+}
+
+function pointerCancel(){
+  if(!drag)return;
+  if(flipEl){
     setTransition(true);
     setAngle(0);
     setTimeout(removeFlip,DURATION+20);
   }
+  drag=null;
 }
 
-book.addEventListener('click',e=>{
-  if(busy)return;
-  if(!open){openBook();return;}
-});
-
-document.querySelector('.zone.right').addEventListener('click',()=>open?goForward():openBook());
-document.querySelector('.zone.left').addEventListener('click',()=>{if(open)goBack()});
-
-document.addEventListener('keydown',e=>{
-  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();open?goForward():openBook();}
-  if(e.key==='ArrowLeft'){e.preventDefault();if(open)goBack();}
-});
-
-// Drag the active flip sheet itself.
-book.addEventListener('pointerdown',e=>{
-  if(busy||!open)return;
-  const r=book.getBoundingClientRect();
-  drag={x:e.clientX,rect:r};
-});
+book.addEventListener('pointerdown',pointerDown);
 book.addEventListener('pointermove',pointerMove);
 book.addEventListener('pointerup',pointerUp);
-book.addEventListener('pointercancel',()=>{drag=null;removeFlip()});
+book.addEventListener('pointercancel',pointerCancel);
 
 // Start closed.
 book.className='book closed';
