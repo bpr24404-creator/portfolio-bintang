@@ -1,220 +1,77 @@
-<!doctype html>
-<html lang="id">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#171614">
-<title>CV & Portfolio — Bintang Putra A.S.</title>
+<!doctype html><html lang="id"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#171614"><title>CV & Portfolio — Bintang Putra A.S.</title>
 <style>
-*{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;overflow:hidden}
-body{
-  background:#171614;color:#fff;font-family:Arial,sans-serif;
-  display:flex;align-items:center;justify-content:center;
-  touch-action:none;-webkit-user-select:none;user-select:none
-}
-.stage{
-  width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;
-  position:relative;padding:5vh 3vw
-}
-#book{
-  width:min(94vw,120vh);
-  height:min(84vh,90vw);
-  max-width:1500px;max-height:1200px;
-  position:relative;
-}
-.page{
-  background:#f7f5ef;color:#171614;
-  overflow:hidden;
-  box-shadow:inset 0 0 0 1px rgba(0,0,0,.045)
-}
-.page img{
-  display:block;width:100%;height:100%;
-  object-fit:contain;background:#f7f5ef
-}
-.cover{
-  width:100%;height:100%;background:#f2eee5;color:#171614;
-  position:relative;display:flex;align-items:center;justify-content:center;
-  overflow:hidden
-}
-.cover:before,.cover:after{
-  content:"";position:absolute;pointer-events:none;
-  border:1px solid rgba(23,22,20,.12)
-}
-.cover:before{inset:4.2%}.cover:after{inset:5.2%}
-.cover-grid{
-  position:absolute;inset:0;
-  background-image:
-    linear-gradient(rgba(23,22,20,.035) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(23,22,20,.035) 1px,transparent 1px);
-  background-size:26px 26px;opacity:.45
-}
-.cover-content{position:relative;z-index:2;text-align:center;padding:10%;width:100%}
-.cover-kicker{
-  font-size:10px;letter-spacing:.32em;text-transform:uppercase;
-  margin-bottom:30px;opacity:.62
-}
-.cover-title{
-  font-family:Georgia,serif;font-size:clamp(30px,5vw,66px);
-  line-height:.92;letter-spacing:-.035em;margin:0
-}
-.cover-sub{
-  font-size:11px;letter-spacing:.24em;text-transform:uppercase;
-  margin-top:25px;opacity:.7
-}
-.cover-rule{width:52px;height:1px;background:#171614;margin:25px auto 0;opacity:.4}
-.cover-mark{
-  position:absolute;left:7%;bottom:6%;font-size:8px;
-  letter-spacing:.18em;text-transform:uppercase;opacity:.48
-}
-.cover-code{
-  position:absolute;right:7%;top:6%;font-size:8px;
-  letter-spacing:.18em;opacity:.48
-}
-.hint,.counter{
-  position:fixed;z-index:100;left:50%;transform:translateX(-50%);
-  color:rgba(255,255,255,.72);background:rgba(20,19,17,.66);
-  border:1px solid rgba(255,255,255,.11);backdrop-filter:blur(8px)
-}
-.hint{
-  top:15px;font-size:10px;letter-spacing:.15em;padding:8px 13px;
-  border-radius:999px;white-space:nowrap
-}
-.counter{
-  bottom:15px;font-size:11px;letter-spacing:.12em;
-  padding:7px 12px;border-radius:999px
-}
-.nav{
-  position:fixed;z-index:101;top:0;height:100%;width:18%;
-  opacity:0;cursor:pointer
-}
-.nav.left{left:0}.nav.right{right:0}
-.book-shadow{
-  position:fixed;inset:auto 10% 4%;height:7%;
-  background:radial-gradient(ellipse,rgba(0,0,0,.38),transparent 70%);
-  filter:blur(10px);pointer-events:none
-}
-
-/* StPageFlip owns the page geometry and curl animation. */
-.stf__parent{margin:auto!important}
-.stf__block{background:transparent!important}
-.stf__item{
-  background:#f7f5ef!important;
-  box-shadow:inset 0 0 0 1px rgba(0,0,0,.04)
-}
-.stf__canvas{background:transparent!important}
-
-@media(max-width:700px){
-  .stage{padding:4vh 3vw}
-  #book{width:min(90vw,62vh);height:min(84vh,125vw)}
-  .hint{top:10px;font-size:9px}
-  .counter{bottom:10px}
-  .nav{width:25%}
-}
-</style>
-</head>
-<body>
-<div class="stage">
-  <div id="book"></div>
-</div>
-<div class="book-shadow"></div>
-<div class="hint" id="hint">SENTUH / GESER UNTUK MEMBUKA</div>
-<div class="counter" id="counter">COVER</div>
-<div class="nav left" id="prev" aria-label="Halaman sebelumnya"></div>
-<div class="nav right" id="next" aria-label="Halaman berikutnya"></div>
-
-<script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}
+body{background:#171614;color:#fff;font-family:Arial,sans-serif;display:flex;align-items:center;justify-content:center;touch-action:none;-webkit-user-select:none;user-select:none}
+.stage{width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;perspective:2200px}
+.book{position:relative;width:min(94vw,124.5vh);aspect-ratio:1.41421356/1;max-height:88vh;transform-style:preserve-3d;filter:drop-shadow(0 25px 38px rgba(0,0,0,.42))}
+.book.closed{width:min(66.5vw,62.25vh);aspect-ratio:.70710678/1}
+.spread{position:absolute;inset:0;display:flex;background:#f7f5ef;transform-style:preserve-3d}
+.page{position:relative;width:50%;height:100%;overflow:hidden;background:#f7f5ef;box-shadow:inset 0 0 0 1px rgba(0,0,0,.035)}
+.page img{display:block;width:100%;height:100%;object-fit:contain;background:#f7f5ef;pointer-events:none}
+.page.left{box-shadow:inset -10px 0 18px rgba(0,0,0,.055)}.page.right{box-shadow:inset 10px 0 18px rgba(0,0,0,.055)}
+.spine{position:absolute;left:50%;top:0;width:10px;height:100%;z-index:25;transform:translateX(-50%);background:linear-gradient(90deg,rgba(0,0,0,.16),rgba(255,255,255,.25),rgba(0,0,0,.11));box-shadow:0 0 13px rgba(0,0,0,.12);pointer-events:none}
+.curl{position:absolute;z-index:60;top:0;width:50%;height:100%;transform-style:preserve-3d;pointer-events:none;will-change:transform}
+.curl.forward{left:50%;transform-origin:left center}.curl.backward{left:0;transform-origin:right center}
+.panel{position:absolute;top:0;height:100%;transform-style:preserve-3d;backface-visibility:visible;overflow:hidden;will-change:transform}
+.panel-face{position:absolute;inset:0;backface-visibility:hidden;background:#f7f5ef;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(0,0,0,.035)}
+.panel-face.back{transform:rotateY(180deg)}.panel-face img{position:absolute;top:0;width:600%;height:100%;max-width:none;object-fit:contain}
+.curl-shadow{position:absolute;z-index:50;top:0;width:50%;height:100%;pointer-events:none;filter:blur(6px);opacity:0}
+.curl-shadow.forward{left:50%;background:linear-gradient(90deg,rgba(0,0,0,.30),transparent 62%)}.curl-shadow.backward{left:0;background:linear-gradient(270deg,rgba(0,0,0,.30),transparent 62%)}
+.cover{position:absolute;inset:0;background:#f2eee5;color:#171614;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.cover:before,.cover:after{content:"";position:absolute;pointer-events:none;border:1px solid rgba(23,22,20,.12)}.cover:before{inset:4.2%}.cover:after{inset:5.2%}
+.cover-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(23,22,20,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(23,22,20,.035) 1px,transparent 1px);background-size:26px 26px;opacity:.45}
+.cover-content{position:relative;z-index:2;text-align:center;padding:10%;width:100%}.cover-kicker{font-size:10px;letter-spacing:.32em;text-transform:uppercase;margin-bottom:30px;opacity:.62}
+.cover-title{font-family:Georgia,serif;font-size:clamp(30px,5vw,66px);line-height:.92;letter-spacing:-.035em;margin:0}.cover-sub{font-size:11px;letter-spacing:.24em;text-transform:uppercase;margin-top:25px;opacity:.7}.cover-rule{width:52px;height:1px;background:#171614;margin:25px auto 0;opacity:.4}
+.cover-mark{position:absolute;left:7%;bottom:6%;font-size:8px;letter-spacing:.18em;text-transform:uppercase;opacity:.48}.cover-code{position:absolute;right:7%;top:6%;font-size:8px;letter-spacing:.18em;opacity:.48}
+.hint,.counter{position:fixed;z-index:100;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.68);background:rgba(20,19,17,.62);border:1px solid rgba(255,255,255,.10);backdrop-filter:blur(8px)}
+.hint{top:16px;font-size:10px;letter-spacing:.16em;padding:8px 13px;border-radius:999px;white-space:nowrap}.counter{bottom:16px;font-size:11px;letter-spacing:.12em;padding:7px 12px;border-radius:999px}
+.zone{position:fixed;z-index:90;top:0;height:100%;width:22%;opacity:0}.zone.left{left:0}.zone.right{right:0}
+@media(max-width:700px){body{background:#11100f}.book,.book.closed{width:min(88vw,62.23vh);aspect-ratio:.70710678/1;max-height:86vh}.spread{display:block}.page{width:100%;display:none}.page.mobile-current{display:block}.spine{display:none}.curl,.curl.forward,.curl.backward{left:0;width:100%;transform-origin:left center}.curl-shadow,.curl-shadow.forward,.curl-shadow.backward{left:0;width:100%}.hint{top:11px;font-size:9px}.counter{bottom:11px}}
+</style></head><body>
+<div class="stage"><div class="book closed" id="book"></div></div>
+<div class="hint" id="hint">SENTUH / GESER UNTUK MEMBUKA</div><div class="counter" id="counter">COVER</div>
+<div class="zone left"></div><div class="zone right"></div>
 <script>
-const TOTAL=17;
-const book=document.getElementById('book');
-const counter=document.getElementById('counter');
-const hint=document.getElementById('hint');
-
-function coverHTML(){
-  return `<div class="cover">
-    <div class="cover-grid"></div>
-    <div class="cover-content">
-      <div class="cover-kicker">Digital Architecture Document</div>
-      <h1 class="cover-title">BINTANG<br>PUTRA A.S.</h1>
-      <div class="cover-sub">CV &amp; PORTFOLIO</div>
-      <div class="cover-rule"></div>
-    </div>
-    <div class="cover-mark">Architecture · Interior · Visualization</div>
-    <div class="cover-code">A.S. / 2026</div>
-  </div>`;
+const TOTAL=17,PANELS=6,DURATION=760,EASE='cubic-bezier(.20,.70,.16,1)';
+const pages=Array.from({length:TOTAL},(_,i)=>`pages/page_${String(i+1).padStart(2,'0')}.jpg`);
+const book=document.getElementById('book'),counter=document.getElementById('counter'),hint=document.getElementById('hint');
+let open=false,spread=0,busy=false,drag=null,curl=null,shadow=null;
+function img(s){return s?`<img src="${s}" draggable="false" alt="">`:''}
+function cover(){return `<div class="cover"><div class="cover-grid"></div><div class="cover-content"><div class="cover-kicker">Digital Architecture Document</div><h1 class="cover-title">BINTANG<br>PUTRA A.S.</h1><div class="cover-sub">CV &amp; PORTFOLIO</div><div class="cover-rule"></div></div><div class="cover-mark">Architecture · Interior · Visualization</div><div class="cover-code">A.S. / 2026</div></div>`}
+function base(){
+ book.className='book';book.innerHTML='';const s=document.createElement('div');s.className='spread';
+ const l=document.createElement('div');l.className='page left';const r=document.createElement('div');r.className='page right';const sp=document.createElement('div');sp.className='spine';
+ s.append(l,r,sp);book.append(s);const li=1+spread*2,ri=li+1;l.innerHTML=pages[li]?img(pages[li]):'';r.innerHTML=pages[ri]?img(pages[ri]):'';
+ if(innerWidth<=700)l.classList.add('mobile-current');counter.textContent=`${li+1}–${Math.min(ri+1,TOTAL)} / ${TOTAL}`;
 }
-
-const pages=[];
-pages.push(`<div class="page" data-density="hard">${coverHTML()}</div>`);
-for(let i=2;i<=17;i++){
-  const hard=i===17?' data-density="hard"':'';
-  pages.push(`<div class="page"${hard}><img src="pages/page_${String(i).padStart(2,'0')}.jpg" alt=""></div>`);
+function makeCurl(dir,front,back){
+ cleanup();curl=document.createElement('div');curl.className='curl '+dir;shadow=document.createElement('div');shadow.className='curl-shadow '+dir;book.querySelector('.spread').append(shadow,curl);
+ for(let i=0;i<PANELS;i++){const p=document.createElement('div');p.className='panel';p.style.left=(i*100/PANELS)+'%';p.style.width=(100/PANELS)+'%';
+  const f=document.createElement('div');f.className='panel-face front',b=document.createElement('div');b.className='panel-face back';
+  if(front){const a=document.createElement('img');a.src=front;a.draggable=false;const z=document.createElement('img');z.src=back||front;z.draggable=false;a.style.width=PANELS*100+'%';z.style.width=PANELS*100+'%';a.style.left=(-i*100)+'%';z.style.left=(-i*100)+'%';f.append(a);b.append(z)}
+  p.append(f,b);curl.append(p)}
 }
-book.innerHTML=pages.join('');
-
-const flip = new St.PageFlip(book,{
-  width:794,
-  height:1123,
-  size:"stretch",
-  minWidth:280,
-  maxWidth:1000,
-  minHeight:395,
-  maxHeight:1414,
-  drawShadow:true,
-  maxShadowOpacity:.42,
-  flippingTime:820,
-  usePortrait:true,
-  startPage:0,
-  autoSize:true,
-  showCover:true,
-  mobileScrollSupport:true,
-  swipeDistance:24,
-  useMouseEvents:true,
-  showPageCorners:true,
-  disableFlipByClick:false
-});
-
-function setCounter(index){
-  if(index===0){
-    counter.textContent='COVER';
-    hint.textContent='SENTUH / GESER UNTUK MEMBUKA';
-    return;
-  }
-  hint.textContent='GESER / SENTUH SISI KANAN ATAU KIRI';
-  if(index>=16){
-    counter.textContent='17 / 17';
-    return;
-  }
-  // In landscape, the event index is the left page of the visible spread.
-  const left=index+1;
-  const right=Math.min(index+2,TOTAL);
-  counter.textContent=`${left}–${right} / ${TOTAL}`;
+function setProgress(p,dir,animate){
+ if(!curl)return;const panels=[...curl.children];
+ panels.forEach((el,i)=>{const bend=Math.sin(i/(PANELS-1)*Math.PI)*24*p,z=Math.sin(i/(PANELS-1)*Math.PI)*28*p;
+  el.style.transition=animate?`transform ${DURATION}ms ${EASE}`:'none';
+  const sign=dir==='forward'?1:-1,deg=(dir==='forward'?-180:180)*p;
+  el.style.transform=`translate3d(${sign*bend}px,0,${z}px) rotateY(${deg+sign*(i-(PANELS-1)/2)*3*p}deg)`;
+ });
+ if(shadow){shadow.style.transition=animate?`opacity ${DURATION}ms ease`:'none';shadow.style.opacity=String(.05+.30*Math.sin(p*Math.PI))}
 }
-
-flip.on('init',e=>setCounter(e.data));
-flip.on('flip',e=>setCounter(e.data));
-
-document.getElementById('next').addEventListener('click',()=>{
-  const i=flip.getCurrentPageIndex();
-  if(i<TOTAL-1) flip.flipNext('bottom');
-});
-document.getElementById('prev').addEventListener('click',()=>{
-  const i=flip.getCurrentPageIndex();
-  if(i>0) flip.flipPrev('bottom');
-});
-
-document.addEventListener('keydown',e=>{
-  if(e.key==='ArrowRight'||e.key===' '){
-    e.preventDefault();
-    if(flip.getCurrentPageIndex()<TOTAL-1) flip.flipNext('bottom');
-  }
-  if(e.key==='ArrowLeft'){
-    e.preventDefault();
-    if(flip.getCurrentPageIndex()>0) flip.flipPrev('bottom');
-  }
-});
-
-flip.loadFromHTML(document.querySelectorAll('.page'));
-</script>
-</body>
-</html>
+function cleanup(){if(curl)curl.remove();if(shadow)shadow.remove();curl=null;shadow=null}
+function finish(dir){if(dir==='forward'){spread++;base();}else if(spread===0){open=false;book.className='book closed';book.innerHTML='';const s=document.createElement('div');s.className='spread',b=document.createElement('div');b.className='page left',c=document.createElement('div');c.className='page right';c.innerHTML=cover();s.append(b,c);book.append(s);counter.textContent='COVER';hint.textContent='SENTUH / GESER UNTUK MEMBUKA'}else{spread--;base()}busy=false}
+function doFlip(dir){if(busy||!open)return;if(dir==='forward'&&1+(spread+1)*2>=TOTAL)return;busy=true;const front=dir==='forward'?pages[2+spread*2]:pages[1+spread*2],back=dir==='forward'?pages[1+(spread+1)*2]:(spread===0?pages[0]:pages[1+(spread-1)*2+1]);makeCurl(dir,front,back);requestAnimationFrame(()=>requestAnimationFrame(()=>{setProgress(1,dir,true);setTimeout(()=>{cleanup();finish(dir)},DURATION+30)}))}
+function openBook(){if(busy||open)return;busy=true;book.className='book closed';makeCurl('forward',null,pages[1]);[...curl.children].forEach((p,i)=>{const f=p.querySelector('.front'),b=p.querySelector('.back');f.innerHTML=cover();b.innerHTML=img(pages[1]);const cv=f.querySelector('.cover');cv.style.width=PANELS*100+'%';cv.style.left=(-i*100)+'%';});requestAnimationFrame(()=>requestAnimationFrame(()=>{setProgress(1,'forward',true);setTimeout(()=>{cleanup();open=true;spread=0;base();busy=false;hint.textContent='GESER / SENTUH SISI KANAN ATAU KIRI'},DURATION+30)}))}
+book.addEventListener('pointerdown',e=>{if(busy)return;drag={x:e.clientX,dir:null}})
+book.addEventListener('pointermove',e=>{if(!drag||busy)return;const dx=e.clientX-drag.x;if(!drag.dir){if(Math.abs(dx)<8)return;drag.dir=dx<0?'forward':'backward';if(drag.dir==='forward'&&(!open||1+(spread+1)*2>=TOTAL)){drag=null;return}if(drag.dir==='backward'&&!open){drag=null;return}const front=drag.dir==='forward'?pages[2+spread*2]:pages[1+spread*2],back=drag.dir==='forward'?pages[1+(spread+1)*2]:(spread===0?pages[0]:pages[1+(spread-1)*2+1]);makeCurl(drag.dir,front,back)}
+ const w=book.getBoundingClientRect().width/2,p=Math.max(0,Math.min(1,Math.abs(dx)/Math.max(1,w)));setProgress(p,drag.dir,false)})
+book.addEventListener('pointerup',e=>{if(!drag)return;const dx=e.clientX-drag.x,dir=drag.dir;drag=null;if(!dir){if(!open)openBook();return}const threshold=Math.max(45,book.getBoundingClientRect().width*.10);if(Math.abs(dx)<threshold){setProgress(0,dir,true);setTimeout(cleanup,DURATION+20)}else{busy=true;setProgress(1,dir,true);setTimeout(()=>{cleanup();if(dir==='forward'){if(!open){open=true;spread=0;base();hint.textContent='GESER / SENTUH SISI KANAN ATAU KIRI';busy=false}else finish(dir)}else finish(dir)},DURATION+30)}})
+book.addEventListener('pointercancel',()=>{drag=null;cleanup()});
+document.querySelector('.zone.right').onclick=()=>open?doFlip('forward'):openBook();document.querySelector('.zone.left').onclick=()=>{if(open)doFlip('backward')};
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();open?doFlip('forward'):openBook()}if(e.key==='ArrowLeft'){e.preventDefault();if(open)doFlip('backward')}});
+book.className='book closed';book.innerHTML='';const s=document.createElement('div');s.className='spread',b=document.createElement('div');b.className='page left',c=document.createElement('div');c.className='page right';c.innerHTML=cover();s.append(b,c);book.append(s);
+</script></body></html>
