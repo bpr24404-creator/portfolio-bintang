@@ -1,11 +1,11 @@
-# Bintang Putra A.S — Digital Magazine
+# Bintang Putra A.S. — Digital Magazine V2
 
-GitHub Pages-ready PWA.
+Digital magazine / CV & Portfolio with a closed-cover opening and realistic page-turn interaction.
 
-## Publish
-1. Create a public GitHub repository.
-2. Upload all files in this folder to the repository root.
-3. GitHub → Settings → Pages → Deploy from a branch → main → /(root).
-4. Open the generated HTTPS URL.
-
-The magazine supports tap navigation, swipe navigation, and a page-turn presentation.
+## Behavior
+- Opens on a closed magazine cover titled **BINTANG PUTRA A.S. — CV & PORTFOLIO**.
+- Tap or swipe to open the cover.
+- Desktop: 2-page A4 spread.
+- Mobile: one A4 page at a time for readability.
+- Pages preserve the full A4 artwork without cropping; source pages are 804×1137 (A4 ratio).
+- Tap/swipe left or right to turn pages.

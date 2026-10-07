@@ -1,10 +1,1 @@
-{
-  "name": "Bintang Putra A.S — Digital Magazine",
-  "short_name": "Bintang Portfolio",
-  "start_url": "./",
-  "scope": "./",
-  "display": "standalone",
-  "background_color": "#111111",
-  "theme_color": "#111111",
-  "orientation": "portrait"
-}
+{"name":"Bintang Putra A.S. — Digital Architecture Magazine","short_name":"Bintang Portfolio","start_url":"./","display":"standalone","background_color":"#171614","theme_color":"#171614","icons":[]}
