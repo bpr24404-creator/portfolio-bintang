@@ -41,6 +41,52 @@ body{
   box-shadow:0 0 13px rgba(0,0,0,.12);pointer-events:none
 }
 
+/* COVER OPEN — dedicated physical A4 cover transition */
+.book.opening{
+  width:min(94vw,124.5vh);
+  aspect-ratio:1.41421356/1;
+  max-height:88vh;
+  transition:none;
+}
+.book.opening .opening-spread{opacity:1}
+.book.opening-start .opening-spread .page.left{opacity:0;transition:opacity 420ms ease 220ms}
+.book.opening-run .opening-spread .page.left{opacity:1}
+.cover-sheet{
+  position:absolute;z-index:70;top:0;left:50%;
+  width:50%;height:100%;
+  transform-style:preserve-3d;transform-origin:left center;
+  will-change:transform;pointer-events:none;
+  transition:transform 760ms cubic-bezier(.18,.72,.16,1);
+}
+.cover-sheet-face{
+  position:absolute;inset:0;background:#f7f5ef;overflow:hidden;
+  backface-visibility:hidden;
+}
+.cover-sheet-face.front{background:#f2eee5}
+.cover-sheet-face.back{transform:rotateY(180deg)}
+.cover-sheet-face img{display:block;width:100%;height:100%;object-fit:contain}
+.cover-sheet::after{
+  content:"";position:absolute;top:0;bottom:0;right:0;width:1px;
+  background:rgba(0,0,0,.14);box-shadow:0 0 7px rgba(0,0,0,.16);
+  transform:translateX(.5px);backface-visibility:hidden
+}
+.cover-crease{
+  position:absolute;top:0;bottom:0;left:0;width:16px;z-index:5;
+  background:linear-gradient(90deg,rgba(0,0,0,.16),rgba(255,255,255,.22),transparent);
+  opacity:.55;pointer-events:none;backface-visibility:hidden
+}
+.cover-sheet-shadow{
+  position:absolute;z-index:65;top:0;left:50%;width:50%;height:100%;
+  pointer-events:none;opacity:0;filter:blur(8px);
+  background:linear-gradient(90deg,rgba(0,0,0,.32),transparent 65%);
+  transition:opacity 760ms ease
+}
+.book.opening-start .opening-spread{opacity:1}
+.book.opening-start .cover-sheet{transform:rotateY(0deg)}
+.book.opening-start .cover-sheet-shadow{opacity:.34}
+.book.opening-run .cover-sheet{transform:rotateY(-180deg)}
+.book.opening-run .cover-sheet-shadow{opacity:0}
+
 /* FINAL — realistic single-sheet paper turn, no segmented slices */
 .sheet{
   position:absolute;top:0;width:50%;height:100%;z-index:50;
@@ -103,6 +149,14 @@ body{
 .zone.left{left:0}.zone.right{right:0}
 
 @media(max-width:700px){
+ .book.opening{width:min(88vw,62.23vh);aspect-ratio:.70710678/1;max-height:86vh}
+ .book.opening .opening-spread{display:block}
+ .book.opening .opening-spread .page{width:100%;display:block}
+ .book.opening .opening-spread .page.right{display:none}
+ .book.opening .opening-spread .spine{display:none}
+ .book.opening .cover-sheet{left:0;width:100%;transform-origin:left center}
+ .book.opening .cover-sheet-shadow{left:0;width:100%}
+
  body{background:#11100f}
  .book{width:min(88vw,62.23vh);aspect-ratio:.70710678/1;max-height:86vh}
  .book.closed{width:min(88vw,62.23vh);aspect-ratio:.70710678/1}
@@ -235,27 +289,58 @@ function animateSheet(sheet,sh,direction){
 function openBook(){
  if(busy||open)return;
  busy=true;
- book.className='book closed';
+
+ /* COVER OPEN — a single physical A4 cover hinged on the spine.
+    The spread is placed behind it from the start, while the cover itself
+    remains one uninterrupted sheet. */
+ book.className='book opening';
  book.innerHTML='';
+
  const s=document.createElement('div');
- s.className='spread';
+ s.className='spread opening-spread';
+ const left=document.createElement('div');
+ left.className='page left';
+ left.innerHTML=img(pages[1]);
+ const right=document.createElement('div');
+ right.className='page right';
+ right.innerHTML=img(pages[2]);
+ const spine=document.createElement('div');
+ spine.className='spine';
+ s.append(left,right,spine);
+
  const sheet=document.createElement('div');
- sheet.className='sheet forward';
- const sh=document.createElement('div');
- sh.className='sheet-shadow forward';
+ sheet.className='cover-sheet';
  const front=document.createElement('div');
- front.className='sheet-face front';
+ front.className='cover-sheet-face front';
  front.innerHTML=cover();
  const back=document.createElement('div');
- back.className='sheet-face back';
+ back.className='cover-sheet-face back';
  back.innerHTML=img(pages[1]);
- sheet.append(front,back);
- s.append(sh,sheet); book.append(s);
- setSheet(sheet,sh,'forward',0,false);
- requestAnimationFrame(()=>requestAnimationFrame(()=>setSheet(sheet,sh,'forward',1,true)));
+ const crease=document.createElement('div');
+ crease.className='cover-crease';
+ const sh=document.createElement('div');
+ sh.className='cover-sheet-shadow';
+ sheet.append(front,back,crease);
+ book.append(s,sh,sheet);
+
+ /* Start as a closed A4 cover over the right-hand side, then rotate as one
+    sheet around the spine. The container widens behind the sheet while the
+    cover keeps its A4 proportions, avoiding the half-width cover artifact. */
+ sheet.style.transform='rotateY(0deg)';
+ sh.style.opacity='.34';
+ book.classList.add('opening-start');
+ requestAnimationFrame(()=>requestAnimationFrame(()=>{
+   book.classList.add('opening-run');
+   sheet.style.transform='rotateY(-180deg)';
+   sh.style.opacity='0';
+ }));
+
  setTimeout(()=>{
-   open=true; spread=0; renderSpread(); busy=false;
- },DURATION+50);
+   open=true;
+   spread=0;
+   renderSpread();
+   busy=false;
+ },DURATION+120);
 }
 
 function forward(){
