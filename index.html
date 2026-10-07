@@ -324,7 +324,7 @@ function beginDrag(direction){
     makeFlip('forward',pages[currentRight],pages[nextLeft]);
   }else{
     if(spread===0){
-      makeFlip('backward',pages[1],pages[0]);
+      makeFlip('backward',pages[0],null);
     }else{
       const currentLeft=1+spread*2;
       const previousRight=1+(spread-1)*2+1;
