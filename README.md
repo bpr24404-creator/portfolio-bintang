@@ -1,1 +1,1 @@
-Bintang Putra A.S. — Digital Magazine A4 FIT — GitHub-ready, pages embedded in index.html.
+Bintang Putra A.S. — Digital Magazine A4 FIT V7.\nUpload index.html, manifest.webmanifest, and the pages/ folder to the repository root.\n
