@@ -132,12 +132,22 @@ function buildCover(){
  });
  coverFlip.on('flip',e=>{
    if(e.data===1){
-     opened=true;coverBook.classList.remove('active');book.classList.add('revealed');
-     hint.textContent='GESER / SENTUH SISI KANAN ATAU KIRI';counter.textContent='CV';
+     opened=true;
+     hint.textContent='GESER / SENTUH SISI KANAN ATAU KIRI';
+     counter.textContent='CV';
+     setTimeout(()=>{
+       coverBook.classList.remove('active');
+       book.classList.add('revealed');
+     },80);
    }
    if(e.data===0){
-     opened=false;book.classList.remove('revealed');coverBook.classList.add('active');
-     hint.textContent='SENTUH / GESER UNTUK MEMBUKA';counter.textContent='COVER';
+     opened=false;
+     hint.textContent='SENTUH / GESER UNTUK MEMBUKA';
+     counter.textContent='COVER';
+     setTimeout(()=>{
+       book.classList.remove('revealed');
+       coverBook.classList.add('active');
+     },80);
    }
  });
  coverFlip.loadFromHTML(coverBook.querySelectorAll('.page'));
@@ -146,7 +156,7 @@ function buildCover(){
 function openCover(){
  if(opening||opened||!coverFlip)return;
  opening=true;coverBook.classList.add('active');coverFlip.flipNext('bottom');
- setTimeout(()=>opening=false,960);
+ setTimeout(()=>opening=false,980);
 }
 
 function closeToCover(){
