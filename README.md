@@ -1,9 +1,1 @@
-BINTANG PUTRA A.S. — CV & PORTFOLIO
-Final GitHub Pages package.
-
-Upload the contents of this folder to the root of the GitHub repository `portfolio-bintang`.
-
-Structure:
-- index.html
-- manifest.webmanifest
-- pages/01-cover.jpg through pages/17-portfolio.jpg
+Bintang Putra A.S. — Digital Magazine V13. Closed cover is a true A4 page; interior remains the 16-page A4 document.
