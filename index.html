@@ -155,7 +155,7 @@ function buildCover(){
 
 function openCover(){
  if(opening||opened||!coverFlip)return;
- opening=true;coverBook.classList.add('active');coverFlip.flipNext('bottom');
+ opening=true;coverBook.classList.add('active');requestAnimationFrame(()=>coverFlip.flipNext('bottom'));
  setTimeout(()=>opening=false,980);
 }
 
