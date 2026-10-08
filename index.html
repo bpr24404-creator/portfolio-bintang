@@ -161,7 +161,7 @@ function openCover(){
 
 function closeToCover(){
  if(opening||!opened||!coverFlip)return;
- opening=true;coverBook.classList.add('active');coverFlip.flipPrev('bottom');
+ opening=true;coverBook.classList.add('active');requestAnimationFrame(()=>coverFlip.flipPrev('bottom'));
  setTimeout(()=>opening=false,920);
 }
 
