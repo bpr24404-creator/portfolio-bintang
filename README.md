@@ -1,2 +1,1 @@
-Bintang Putra A.S. — CV & Portfolio Digital Magazine V10.
-17 A4 sheets: cover, CV, and portfolio pages from the approved source PDFs.
+Bintang Putra A.S. — Digital Magazine A4 FIT V11 REAL BOOK. All 17 A4 document pages are loaded persistently as images; StPageFlip image/canvas mode is used for the page curl. CV is page 02 and is retained.\n

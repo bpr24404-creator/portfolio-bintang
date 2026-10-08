@@ -8,96 +8,213 @@
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;width:100%;height:100%;overflow:hidden}
-body{background:#171614;color:#fff;font-family:Arial,sans-serif;display:flex;align-items:center;justify-content:center;touch-action:none}
-.stage{position:relative;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;padding:58px 22px 62px}
-#book{position:relative;width:min(94vw,122vh);height:min(84vh,86vw);max-width:1540px;max-height:1180px}
-.book-shadow{position:fixed;z-index:0;left:10%;right:10%;bottom:4%;height:8%;background:radial-gradient(ellipse,rgba(0,0,0,.42),transparent 70%);filter:blur(12px);pointer-events:none}
-#book,.stf__parent{z-index:2}
-.stf__parent{margin:auto!important}
-.stf__wrapper{background:transparent!important}
-.stf__block{background:transparent!important}
-.stf__item{background:#f7f5ef!important;box-shadow:inset 0 0 0 1px rgba(0,0,0,.04)}
-.stf__canvas{background:transparent!important}
-.hint,.counter{position:fixed;z-index:20;left:50%;transform:translateX(-50%);background:rgba(20,19,17,.66);border:1px solid rgba(255,255,255,.11);color:rgba(255,255,255,.74);backdrop-filter:blur(8px);border-radius:999px;letter-spacing:.13em;white-space:nowrap}
-.hint{top:16px;font-size:10px;padding:8px 13px}
-.counter{bottom:15px;font-size:11px;padding:7px 12px}
-.nav{position:fixed;z-index:19;top:0;height:100%;width:20%;opacity:0;cursor:pointer}
+body{
+  background:#171614;color:#fff;font-family:Arial,sans-serif;
+  display:flex;align-items:center;justify-content:center;
+  touch-action:none;-webkit-user-select:none;user-select:none
+}
+.stage{
+  width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;
+  position:relative;padding:5vh 3vw
+}
+#book{
+  width:min(94vw,124vh);
+  height:min(88vh,88vw);
+  max-width:1500px;max-height:1200px;
+  position:relative;
+}
+#book > canvas{outline:none}
+.loading{
+  position:fixed;inset:0;z-index:200;background:#171614;
+  display:flex;align-items:center;justify-content:center;
+  transition:opacity .25s ease
+}
+.loading.hide{opacity:0;pointer-events:none}
+.loading-inner{text-align:center;color:#eee}
+.loading-title{
+  font-family:Georgia,serif;font-size:25px;letter-spacing:.02em
+}
+.loading-sub{
+  margin-top:12px;font-size:10px;letter-spacing:.18em;opacity:.55
+}
+.hint,.counter{
+  position:fixed;z-index:100;left:50%;transform:translateX(-50%);
+  color:rgba(255,255,255,.72);background:rgba(20,19,17,.68);
+  border:1px solid rgba(255,255,255,.11);
+  backdrop-filter:blur(8px);pointer-events:none
+}
+.hint{
+  top:15px;font-size:10px;letter-spacing:.15em;padding:8px 13px;
+  border-radius:999px;white-space:nowrap
+}
+.counter{
+  bottom:15px;font-size:11px;letter-spacing:.12em;
+  padding:7px 12px;border-radius:999px
+}
+.nav{
+  position:fixed;z-index:110;top:0;height:100%;width:15%;
+  opacity:0;cursor:pointer
+}
 .nav.left{left:0}.nav.right{right:0}
+.shadow{
+  position:fixed;left:8%;right:8%;bottom:3%;height:7%;
+  background:radial-gradient(ellipse,rgba(0,0,0,.38),transparent 70%);
+  filter:blur(10px);pointer-events:none
+}
 @media(max-width:700px){
- .stage{padding:50px 14px 55px}
- #book{width:min(90vw,61vh);height:min(84vh,126vw)}
- .hint{top:10px;font-size:9px}.counter{bottom:10px}.nav{width:25%}
+  .stage{padding:4vh 3vw}
+  #book{width:min(91vw,62vh);height:min(86vh,128vw)}
+  .hint{top:10px;font-size:9px}
+  .counter{bottom:10px}
+  .nav{width:24%}
 }
 </style>
 </head>
 <body>
+<div class="loading" id="loading">
+  <div class="loading-inner">
+    <div class="loading-title">BINTANG PUTRA A.S.</div>
+    <div class="loading-sub">LOADING CV &amp; PORTFOLIO</div>
+  </div>
+</div>
+
 <div class="stage"><div id="book"></div></div>
-<div class="book-shadow"></div>
+<div class="shadow"></div>
 <div class="hint" id="hint">SENTUH / GESER UNTUK MEMBUKA</div>
 <div class="counter" id="counter">COVER</div>
-<div class="nav left" id="prev"></div><div class="nav right" id="next"></div>
+<div class="nav left" id="prev" aria-label="Halaman sebelumnya"></div>
+<div class="nav right" id="next" aria-label="Halaman berikutnya"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
 <script>
-const TOTAL=17;
-const images=[
- 'pages/01-cover.jpg',
- 'pages/02-cv.jpg',
- 'pages/03-portfolio.jpg',
- 'pages/04-portfolio.jpg',
- 'pages/05-portfolio.jpg',
- 'pages/06-portfolio.jpg',
- 'pages/07-portfolio.jpg',
- 'pages/08-portfolio.jpg',
- 'pages/09-portfolio.jpg',
- 'pages/10-portfolio.jpg',
- 'pages/11-portfolio.jpg',
- 'pages/12-portfolio.jpg',
- 'pages/13-portfolio.jpg',
- 'pages/14-portfolio.jpg',
- 'pages/15-portfolio.jpg',
- 'pages/16-portfolio.jpg',
- 'pages/17-portfolio.jpg'
+const TOTAL = 17;
+const pageFiles = [
+  "01-cover.jpg",
+  "02-cv.jpg",
+  "03-portfolio.jpg",
+  "04-portfolio.jpg",
+  "05-portfolio.jpg",
+  "06-portfolio.jpg",
+  "07-portfolio.jpg",
+  "08-portfolio.jpg",
+  "09-portfolio.jpg",
+  "10-portfolio.jpg",
+  "11-portfolio.jpg",
+  "12-portfolio.jpg",
+  "13-portfolio.jpg",
+  "14-portfolio.jpg",
+  "15-portfolio.jpg",
+  "16-portfolio.jpg",
+  "17-portfolio.jpg"
 ];
-const book=document.getElementById('book');
-const counter=document.getElementById('counter');
-const hint=document.getElementById('hint');
+const imageUrls = pageFiles.map(x => "pages/" + x);
 
-function update(index){
- if(index===0){counter.textContent='COVER';hint.textContent='SENTUH / GESER UNTUK MEMBUKA';return;}
- hint.textContent='GESER / SENTUH SISI KANAN ATAU KIRI';
- if(index>=16){counter.textContent='16–17 / 17';return;}
- const left=index+1;
- const right=Math.min(index+2,TOTAL);
- counter.textContent=`${left}–${right} / ${TOTAL}`;
+const book = document.getElementById("book");
+const counter = document.getElementById("counter");
+const hint = document.getElementById("hint");
+const loading = document.getElementById("loading");
+
+function preload(src){
+  return new Promise((resolve,reject)=>{
+    const im = new Image();
+    im.onload=()=>resolve();
+    im.onerror=()=>reject(new Error("Failed to load "+src));
+    im.src=src;
+  });
 }
 
-const flip=new St.PageFlip(book,{
- width:794,height:1123,size:'stretch',
- minWidth:280,maxWidth:1000,minHeight:395,maxHeight:1414,
- drawShadow:true,maxShadowOpacity:.38,flippingTime:760,
- usePortrait:true,startPage:0,autoSize:true,showCover:true,
- mobileScrollSupport:true,swipeDistance:18,useMouseEvents:true,
- showPageCorners:true,disableFlipByClick:false
-});
+function updateUI(index){
+  if(index===0){
+    counter.textContent="COVER";
+    hint.textContent="SENTUH / GESER UNTUK MEMBUKA";
+    return;
+  }
+  hint.textContent="GESER / SENTUH SISI KANAN ATAU KIRI";
+  if(index===TOTAL-1){
+    counter.textContent=TOTAL+" / "+TOTAL;
+    return;
+  }
+  const left=index+1;
+  const right=Math.min(index+2,TOTAL);
+  counter.textContent=left+"–"+right+" / "+TOTAL;
+}
 
-flip.on('init',e=>update(e.data));
-flip.on('flip',e=>update(e.data));
-flip.on('changeState',e=>{
- if(e.data==='read'){book.style.cursor='default'}
-});
+async function start(){
+  try{
+    await Promise.all(imageUrls.map(preload));
+  }catch(err){
+    loading.querySelector(".loading-sub").textContent="HALAMAN GAGAL DIMUAT";
+    console.error(err);
+    return;
+  }
 
-document.getElementById('next').onclick=()=>{if(flip.getCurrentPageIndex()<TOTAL-1)flip.flipNext('bottom')};
-document.getElementById('prev').onclick=()=>{if(flip.getCurrentPageIndex()>0)flip.flipPrev('bottom')};
-document.addEventListener('keydown',e=>{
- if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();if(flip.getCurrentPageIndex()<TOTAL-1)flip.flipNext('bottom')}
- if(e.key==='ArrowLeft'){e.preventDefault();if(flip.getCurrentPageIndex()>0)flip.flipPrev('bottom')}
-});
+  if(!window.St || !St.PageFlip){
+    loading.querySelector(".loading-sub").textContent="FLIP ENGINE TIDAK TERMUAT";
+    return;
+  }
 
-// Use image loading rather than HTML pages: this keeps the original A4 sheets intact.
-const imgs=images.map(src=>{const im=new Image();im.src=src;return im});
-Promise.all(imgs.map(im=>im.decode?im.decode().catch(()=>{}):Promise.resolve())).finally(()=>{
- flip.loadFromImages(images);
-});
+  /*
+    Real book engine:
+    - image pages stay persistent in the canvas page collection
+    - first and last pages are hard covers
+    - the library performs the actual fold/curl/shadow calculation
+    - no spread DOM rebuild after each turn
+  */
+  const pageFlip = new St.PageFlip(book,{
+    width:794,
+    height:1123,
+    size:"stretch",
+    minWidth:280,
+    maxWidth:1000,
+    minHeight:395,
+    maxHeight:1414,
+    drawShadow:true,
+    maxShadowOpacity:.42,
+    flippingTime:850,
+    usePortrait:true,
+    startPage:0,
+    startZIndex:0,
+    autoSize:true,
+    showCover:true,
+    mobileScrollSupport:true,
+    swipeDistance:22,
+    useMouseEvents:true,
+    showPageCorners:true,
+    disableFlipByClick:false
+  });
+
+  pageFlip.on("init",e=>{
+    updateUI(e.data);
+    requestAnimationFrame(()=>{
+      loading.classList.add("hide");
+      setTimeout(()=>loading.remove(),300);
+    });
+  });
+
+  pageFlip.on("flip",e=>updateUI(e.data));
+
+  document.getElementById("next").addEventListener("click",()=>{
+    if(pageFlip.getCurrentPageIndex()<TOTAL-1) pageFlip.flipNext("bottom");
+  });
+  document.getElementById("prev").addEventListener("click",()=>{
+    if(pageFlip.getCurrentPageIndex()>0) pageFlip.flipPrev("bottom");
+  });
+
+  document.addEventListener("keydown",e=>{
+    if(e.key==="ArrowRight" || e.key===" "){
+      e.preventDefault();
+      if(pageFlip.getCurrentPageIndex()<TOTAL-1) pageFlip.flipNext("bottom");
+    }
+    if(e.key==="ArrowLeft"){
+      e.preventDefault();
+      if(pageFlip.getCurrentPageIndex()>0) pageFlip.flipPrev("bottom");
+    }
+  });
+
+  // IMPORTANT: image mode keeps the CV and all portfolio pages intact.
+  pageFlip.loadFromImages(imageUrls);
+}
+start();
 </script>
 </body>
 </html>
