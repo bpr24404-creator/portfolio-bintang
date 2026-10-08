@@ -203,7 +203,7 @@ function openCover(){
  book.classList.remove('revealed');
  coverBook.classList.add('active');
  coverFlip.flipNext('bottom');
- setTimeout(()=>coverAnimating=false,960);
+ setTimeout(()=>coverAnimating=false,850);
 }
 
 function closeToCover(){
@@ -211,7 +211,7 @@ function closeToCover(){
  coverAnimating=true;
  coverBook.classList.add('active');
  coverFlip.flipPrev('bottom');
- setTimeout(()=>coverAnimating=false,960);
+ setTimeout(()=>coverAnimating=false,850);
 }
 
 document.getElementById('next').onclick=()=>{
