@@ -73,10 +73,24 @@ const book=document.getElementById('book');
 const counter=document.getElementById('counter');
 const hint=document.getElementById('hint');
 
-function update(index){
- if(index===0){counter.textContent='COVER';hint.textContent='SENTUH / GESER UNTUK MEMBUKA';return;}
+function update(raw){
+ const index = (typeof raw === 'number')
+   ? raw
+   : (flip && typeof flip.getCurrentPageIndex === 'function'
+      ? flip.getCurrentPageIndex() : 0);
+
+ if(index===0){
+   counter.textContent='COVER';
+   hint.textContent='SENTUH / GESER UNTUK MEMBUKA';
+   return;
+ }
  hint.textContent='GESER / SENTUH SISI KANAN ATAU KIRI';
- if(index>=16){counter.textContent='16–17 / 17';return;}
+
+ if(index>=16){
+   counter.textContent='17 / 17';
+   return;
+ }
+
  const left=index+1;
  const right=Math.min(index+2,TOTAL);
  counter.textContent=`${left}–${right} / ${TOTAL}`;
@@ -86,7 +100,7 @@ const flip=new St.PageFlip(book,{
  width:794,height:1123,size:'stretch',
  minWidth:280,maxWidth:1000,minHeight:395,maxHeight:1414,
  drawShadow:true,maxShadowOpacity:.52,flippingTime:980,
- usePortrait:true,startPage:0,autoSize:true,showCover:true,
+ usePortrait:window.innerWidth<700,startPage:0,autoSize:true,showCover:true,
  mobileScrollSupport:true,swipeDistance:14,useMouseEvents:true,
  showPageCorners:true,disableFlipByClick:false
 });
