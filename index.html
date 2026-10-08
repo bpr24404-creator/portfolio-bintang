@@ -138,7 +138,7 @@ function buildCover(){
      setTimeout(()=>{
        coverBook.classList.remove('active');
        book.classList.add('revealed');
-     },80);
+     },0);
    }
    if(e.data===0){
      opened=false;
@@ -147,7 +147,7 @@ function buildCover(){
      setTimeout(()=>{
        book.classList.remove('revealed');
        coverBook.classList.add('active');
-     },80);
+     },0);
    }
  });
  coverFlip.loadFromHTML(coverBook.querySelectorAll('.page'));
