@@ -1,1 +1,9 @@
-Bintang Putra A.S. — Digital Magazine A4 FIT V11. Cover + inside cover + CV + portfolio. The CV is kept as the first content page after the cover.
+BINTANG PUTRA A.S. — CV & PORTFOLIO
+Final GitHub Pages package.
+
+Upload the contents of this folder to the root of the GitHub repository `portfolio-bintang`.
+
+Structure:
+- index.html
+- manifest.webmanifest
+- pages/01-cover.jpg through pages/17-portfolio.jpg
