@@ -1,1 +1,1 @@
-Bintang Putra A.S. — Digital Magazine A4 FIT V11 REAL BOOK. All 17 A4 document pages are loaded persistently as images; StPageFlip image/canvas mode is used for the page curl. CV is page 02 and is retained.\n
+Bintang Putra A.S. — Digital Magazine A4 FIT V11. Cover + inside cover + CV + portfolio. The CV is kept as the first content page after the cover.
