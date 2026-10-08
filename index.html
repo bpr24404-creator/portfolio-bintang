@@ -156,13 +156,13 @@ function buildCover(){
 function openCover(){
  if(opening||opened||!coverFlip)return;
  opening=true;coverBook.classList.add('active');requestAnimationFrame(()=>coverFlip.flipNext('bottom'));
- setTimeout(()=>opening=false,980);
+ setTimeout(()=>opening=false,920);
 }
 
 function closeToCover(){
  if(opening||!opened||!coverFlip)return;
  opening=true;coverBook.classList.add('active');coverFlip.flipPrev('bottom');
- setTimeout(()=>opening=false,960);
+ setTimeout(()=>opening=false,920);
 }
 
 cover.addEventListener('click',openCover);
